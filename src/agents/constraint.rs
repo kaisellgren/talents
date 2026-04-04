@@ -11,12 +11,11 @@ pub fn run(candidates: Vec<Candidate>, triage: &TriageOutput) -> Vec<Candidate> 
             if !c.available {
                 return false;
             }
-            if let Some(max_rate) = triage.max_hourly_rate {
-                if let Some(candidate_max) = c.hourly_rate_max {
-                    if candidate_max > max_rate {
-                        return false;
-                    }
-                }
+            if let Some(max_rate) = triage.max_hourly_rate
+                && let Some(candidate_max) = c.hourly_rate_max
+                && candidate_max > max_rate
+            {
+                return false;
                 // Candidates with no hourly_rate_max set are allowed through —
                 // rate is unknown, so we do not assume a violation.
             }
