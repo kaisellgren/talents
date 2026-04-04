@@ -17,6 +17,8 @@ pub fn run(candidates: Vec<Candidate>, triage: &TriageOutput) -> Vec<Candidate> 
                         return false;
                     }
                 }
+                // Candidates with no hourly_rate_max set are allowed through —
+                // rate is unknown, so we do not assume a violation.
             }
             let skills_lower: Vec<String> =
                 c.skills.iter().map(|s| s.to_ascii_lowercase()).collect();

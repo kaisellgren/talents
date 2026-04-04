@@ -73,3 +73,12 @@ fn keeps_candidate_when_no_rate_limit_specified() {
     let result = constraint::run(candidates, &triage);
     assert_eq!(result.len(), 1);
 }
+
+#[test]
+fn keeps_candidate_with_no_rate_when_max_rate_is_specified() {
+    let candidates = vec![make_candidate(vec!["rust".into()], true, None)];
+    let triage = make_triage(vec!["rust"], Some(100));
+    let result = constraint::run(candidates, &triage);
+    // Candidates with unknown rate are kept — rate cannot be proven to violate the limit.
+    assert_eq!(result.len(), 1);
+}

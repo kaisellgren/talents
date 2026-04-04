@@ -1,7 +1,7 @@
 use anyhow::Result;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TriageOutput {
     pub required_skills: Vec<String>,
     #[serde(default)]
