@@ -13,6 +13,10 @@ pub struct SummarizedCandidate {
 /// Asks the LLM to generate a short per-candidate summary explaining
 /// why each candidate suits the original prompt.
 pub async fn run(candidates: &[Candidate], prompt: &str) -> Result<Vec<SummarizedCandidate>> {
+    if candidates.is_empty() {
+        return Ok(vec![]);
+    }
+
     let system_prompt = "You are a talent summarizer. \
         For each candidate, write a 2-3 sentence summary explaining why they are well-suited \
         for the given search prompt. Be specific about their skills, location, and rate. \
