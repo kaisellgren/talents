@@ -12,6 +12,15 @@ use uuid::Uuid;
 use crate::db::candidate as db_candidate;
 use db_candidate::Candidate;
 
+/// Query parameters for candidate search.
+#[derive(Debug, Deserialize)]
+struct SearchParams {
+    #[serde(default)]
+    skills: Vec<String>,
+    city: Option<String>,
+    country: Option<String>,
+}
+
 /// Request body for creating a new candidate.
 #[derive(Debug, Deserialize)]
 pub struct NewCandidate {
@@ -95,24 +104,19 @@ async fn list_available(
 
 async fn search_candidates(
     Extension(pool): Extension<PgPool>,
-    Query(params): Query<std::collections::HashMap<String, String>>,
+    Query(params): Query<SearchParams>,
 ) -> Result<Json<Vec<Candidate>>, Response> {
-    let skill = params.get("skills").cloned();
-    let city = params.get("city").cloned();
-    let country = params.get("country").cloned();
-
-    if skill.is_none() {
+    if params.skills.is_empty() {
         return Err(api_error_response(anyhow::anyhow!(
             "'skills' query param required"
         )));
     }
 
-    let skills = vec![skill.unwrap()];
     let candidates = db_candidate::search_by_skills_and_location(
         &pool,
-        &skills,
-        city.as_deref(),
-        country.as_deref(),
+        &params.skills,
+        params.city.as_deref(),
+        params.country.as_deref(),
     )
     .await
     .map_err(|e| api_error_response(anyhow::Error::from(e)))?;
