@@ -9,14 +9,11 @@ pub struct TestContext {
     pub pool: PgPool,
 }
 
-/// Creates a fresh DB pool for use within the current tokio runtime.
-/// A new pool is created per test because sqlx pools bind their background tasks
-/// to the tokio runtime that created them; reusing a pool across runtimes breaks it.
-async fn get_pool() -> PgPool {
+async fn connect_pool(max_connections: u32) -> PgPool {
     dotenvy::dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
     sqlx::postgres::PgPoolOptions::new()
-        .max_connections(5)
+        .max_connections(max_connections)
         .connect(&database_url)
         .await
         .expect("Failed to connect to DB")
@@ -25,11 +22,11 @@ async fn get_pool() -> PgPool {
 /// Starts the mock SGLang server and the real app on random ports.
 /// Truncates the candidates table so each test starts clean.
 /// Must be called with --test-threads=1 since it sets SGLANG_URL env var.
-/// Tests should use #[tokio::test(flavor = "current_thread")] to avoid multi-threaded env mutation.
+/// Tests must use #[tokio::test(flavor = "current_thread")].
 pub async fn setup() -> TestContext {
-    let pool = get_pool().await;
+    // Test pool — used for truncation and seeding
+    let pool = connect_pool(2).await;
 
-    // Clean state before each test
     sqlx::query("TRUNCATE TABLE candidates RESTART IDENTITY CASCADE")
         .execute(&pool)
         .await
@@ -53,14 +50,8 @@ pub async fn setup() -> TestContext {
         std::env::set_var("SGLANG_URL", format!("http://{}", mock_addr));
     }
 
-    // Create a dedicated pool for the app so it doesn't exhaust the shared test pool.
-    dotenvy::dotenv().ok();
-    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let app_pool = sqlx::postgres::PgPoolOptions::new()
-        .max_connections(5)
-        .connect(&database_url)
-        .await
-        .expect("Failed to create app pool");
+    // App pool — separate from test pool so app requests don't exhaust test connections
+    let app_pool = connect_pool(2).await;
 
     // Start real app on a random port using its own pool
     let app_listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
@@ -74,12 +65,11 @@ pub async fn setup() -> TestContext {
             .unwrap();
     });
 
-    // Give servers a moment to be ready
     tokio::time::sleep(std::time::Duration::from_millis(50)).await;
 
     TestContext {
         client: reqwest::Client::new(),
         app_url: format!("http://{}", app_addr),
-        pool: pool.clone(),
+        pool,
     }
 }

@@ -31,7 +31,8 @@ async fn create_candidate_returns_201_with_id() {
 
     assert_eq!(res.status(), 201);
     let body: Value = res.json().await.unwrap();
-    assert!(body["id"].as_str().is_some(), "response should contain an id");
+    let id_str = body["id"].as_str().expect("response should contain an id");
+    assert!(uuid::Uuid::parse_str(id_str).is_ok(), "id should be a valid UUID");
 }
 
 // ─── GET /candidates/available ────────────────────────────────────────────────
@@ -95,6 +96,10 @@ async fn search_by_skill_returns_matching_candidates() {
     assert_eq!(res.status(), 200);
     let body: Vec<Value> = res.json().await.unwrap();
     assert_eq!(body.len(), 1);
+    assert!(
+        body[0]["skills"].as_array().unwrap().contains(&serde_json::json!("rust")),
+        "returned candidate should have 'rust' skill"
+    );
 }
 
 #[tokio::test(flavor = "current_thread")]
@@ -166,6 +171,7 @@ async fn agent_run_with_no_matching_candidates_retries_and_returns_empty() {
 
     assert_eq!(res.status(), 200);
     let body: Value = res.json().await.unwrap();
+    // 5 is the max retry limit defined in src/agents/mod.rs (max_iterations = 5u32)
     assert_eq!(body["iterations"], 5);
     let candidates = body["candidates"].as_array().unwrap();
     assert!(
