@@ -15,8 +15,8 @@ use db_candidate::Candidate;
 /// Query parameters for candidate search.
 #[derive(Debug, Deserialize)]
 struct SearchParams {
-    #[serde(default)]
-    skills: Vec<String>,
+    /// Comma-separated list of skills, e.g. `?skills=rust,postgresql`
+    skills: Option<String>,
     city: Option<String>,
     country: Option<String>,
 }
@@ -105,15 +105,18 @@ async fn search_candidates(
     Extension(pool): Extension<PgPool>,
     Query(params): Query<SearchParams>,
 ) -> Result<Json<Vec<Candidate>>, Response> {
-    if params.skills.is_empty() {
-        return Err(api_error_response(anyhow::anyhow!(
-            "'skills' query param required"
-        )));
-    }
+    let skills: Vec<String> = match params.skills.as_deref() {
+        None | Some("") => {
+            return Err(api_error_response(anyhow::anyhow!(
+                "'skills' query param required"
+            )));
+        }
+        Some(s) => s.split(',').map(|s| s.trim().to_string()).collect(),
+    };
 
     let candidates = db_candidate::search_by_skills_and_location(
         &pool,
-        &params.skills,
+        &skills,
         params.city.as_deref(),
         params.country.as_deref(),
     )

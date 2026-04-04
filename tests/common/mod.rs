@@ -2,9 +2,6 @@ pub mod mock_sglang;
 pub mod seed;
 
 use sqlx::PgPool;
-use std::sync::OnceLock;
-
-static DB_POOL: OnceLock<PgPool> = OnceLock::new();
 
 pub struct TestContext {
     pub client: reqwest::Client,
@@ -12,19 +9,17 @@ pub struct TestContext {
     pub pool: PgPool,
 }
 
-/// Returns the shared DB pool, initialising it on first call.
-async fn get_pool() -> &'static PgPool {
-    if let Some(pool) = DB_POOL.get() {
-        return pool;
-    }
+/// Creates a fresh DB pool for use within the current tokio runtime.
+/// A new pool is created per test because sqlx pools bind their background tasks
+/// to the tokio runtime that created them; reusing a pool across runtimes breaks it.
+async fn get_pool() -> PgPool {
     dotenvy::dotenv().ok();
     let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
-    let pool = PgPool::connect(&database_url)
+    sqlx::postgres::PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
         .await
-        .expect("Failed to connect to DB");
-    // OnceLock::set can fail if another thread races us; in that case just return the winner.
-    let _ = DB_POOL.set(pool);
-    DB_POOL.get().unwrap()
+        .expect("Failed to connect to DB")
 }
 
 /// Starts the mock SGLang server and the real app on random ports.
@@ -36,7 +31,7 @@ pub async fn setup() -> TestContext {
 
     // Clean state before each test
     sqlx::query("TRUNCATE TABLE candidates RESTART IDENTITY CASCADE")
-        .execute(pool)
+        .execute(&pool)
         .await
         .expect("Failed to truncate candidates");
 
@@ -58,10 +53,19 @@ pub async fn setup() -> TestContext {
         std::env::set_var("SGLANG_URL", format!("http://{}", mock_addr));
     }
 
-    // Start real app on a random port
+    // Create a dedicated pool for the app so it doesn't exhaust the shared test pool.
+    dotenvy::dotenv().ok();
+    let database_url = std::env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let app_pool = sqlx::postgres::PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await
+        .expect("Failed to create app pool");
+
+    // Start real app on a random port using its own pool
     let app_listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let app_addr = app_listener.local_addr().unwrap();
-    let app = talents::create_app(pool.clone());
+    let app = talents::create_app(app_pool);
     tokio::spawn(async move {
         axum::Server::from_tcp(app_listener)
             .unwrap()
