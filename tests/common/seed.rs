@@ -1,22 +1,12 @@
 use sqlx::PgPool;
 use talents::db::candidate::Candidate;
 
+#[derive(Default)]
 pub struct CandidateOverrides {
     pub name: Option<String>,
     pub skills: Option<Vec<String>>,
     pub available: Option<bool>,
     pub hourly_rate_max: Option<i32>,
-}
-
-impl Default for CandidateOverrides {
-    fn default() -> Self {
-        Self {
-            name: None,
-            skills: None,
-            available: None,
-            hourly_rate_max: None,
-        }
-    }
 }
 
 /// Inserts a candidate into the DB with sensible defaults, accepting field overrides.

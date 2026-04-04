@@ -26,6 +26,10 @@ async fn handle_completion(
             .to_string()
     } else if system_content.contains("ranking") {
         let candidates = parse_candidates_from_user_content(user_content);
+        if candidates.is_empty() {
+            eprintln!("mock_sglang: ranking called but no candidates parsed from user content");
+            return Err(StatusCode::UNPROCESSABLE_ENTITY);
+        }
         let rankings: Vec<Value> = candidates
             .iter()
             .map(|id| json!({"candidate_id": id, "score": 0.9, "reasoning": "Strong match"}))
@@ -33,6 +37,10 @@ async fn handle_completion(
         serde_json::to_string(&json!({"rankings": rankings})).unwrap()
     } else if system_content.contains("summarizer") {
         let candidates = parse_candidates_from_user_content(user_content);
+        if candidates.is_empty() {
+            eprintln!("mock_sglang: summarizer called but no candidates parsed from user content");
+            return Err(StatusCode::UNPROCESSABLE_ENTITY);
+        }
         let summaries: Vec<Value> = candidates
             .iter()
             .map(|id| json!({"candidate_id": id, "summary": "Great candidate."}))
