@@ -3,6 +3,7 @@ use axum::Extension;
 use sqlx::PgPool;
 use std::net::SocketAddr;
 
+mod agents;
 mod db;
 mod sglang;
 mod routes {
