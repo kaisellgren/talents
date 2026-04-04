@@ -66,7 +66,6 @@ pub fn router() -> Router {
         .route("/", post(create_candidate))
         .route("/available", get(list_available))
         .route("/search", get(search_candidates))
-        .route("/agents/run", post(run_agent))
 }
 
 async fn create_candidate(
@@ -123,7 +122,7 @@ async fn search_candidates(
     Ok(Json(candidates))
 }
 
-async fn run_agent(
+pub async fn run_agent(
     Extension(pool): Extension<PgPool>,
     Json(body): Json<AgentRequest>,
 ) -> Result<Json<crate::agents::AgentResponse>, Response> {

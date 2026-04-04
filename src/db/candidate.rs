@@ -61,6 +61,10 @@ pub async fn search_by_skills_and_location(
     city: Option<&str>,
     country: Option<&str>,
 ) -> Result<Vec<Candidate>, sqlx::Error> {
+    if required_skills.is_empty() {
+        return Ok(vec![]);
+    }
+
     let skills_lower: Vec<String> = required_skills
         .iter()
         .map(|s| s.to_ascii_lowercase())

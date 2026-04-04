@@ -18,6 +18,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let app = Router::new()
         .nest("/candidates", routes::candidate::router())
+        .route("/agents/run", axum::routing::post(routes::candidate::run_agent))
         .layer(Extension(pool));
 
     let addr: SocketAddr = ([127, 0, 0, 1], 3000).into();
