@@ -1,0 +1,91 @@
+use serde::{Deserialize, Serialize};
+use sqlx::{FromRow, PgPool, query_as};
+use uuid::Uuid;
+use chrono::{DateTime, Utc};
+
+#[derive(Debug, Clone, PartialEq, Eq, FromRow, Serialize, Deserialize)]
+pub struct Candidate {
+    pub id: Uuid,
+    pub name: String,
+    #[sqlx(json)]
+    pub skills: Vec<String>,
+    pub location_city: String,
+    pub location_country: String,
+    pub role: Option<String>,
+    pub available: bool,
+    pub hourly_rate_min: Option<i32>,
+    pub hourly_rate_max: Option<i32>,
+    pub biography: Option<String>,
+    pub created_at: DateTime<Utc>,
+}
+
+pub async fn create_candidate(pool: &PgPool, candidate: Candidate) -> Result<Candidate, sqlx::Error> {
+    let skills_json = serde_json::to_value(&candidate.skills).unwrap();
+    let rec = query_as::<_, Candidate>(
+        r#"
+        INSERT INTO candidates (
+            name, skills, location_city, location_country,
+            role, available, hourly_rate_min, hourly_rate_max, biography
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+        RETURNING *
+        "#,
+    )
+    .bind(candidate.name)
+    .bind(skills_json)
+    .bind(candidate.location_city)
+    .bind(candidate.location_country)
+    .bind(candidate.role)
+    .bind(candidate.available)
+    .bind(candidate.hourly_rate_min)
+    .bind(candidate.hourly_rate_max)
+    .bind(candidate.biography)
+    .fetch_one(pool)
+    .await?;
+    Ok(rec)
+}
+
+/// Retrieve all available candidates.
+pub async fn list_available(pool: &PgPool) -> Result<Vec<Candidate>, sqlx::Error> {
+    let rows = query_as::<_, Candidate>("SELECT * FROM candidates WHERE available = true")
+        .fetch_all(pool)
+        .await?;
+    Ok(rows)
+}
+
+/// Search candidates matching all required skills and optional location filters.
+/// Uses parameterized queries throughout to prevent SQL injection.
+pub async fn search_by_skills_and_location(
+    pool: &PgPool,
+    required_skills: &[String],
+    city: Option<&str>,
+    country: Option<&str>,
+) -> Result<Vec<Candidate>, sqlx::Error> {
+    let skills_lower: Vec<String> = required_skills
+        .iter()
+        .map(|s| s.to_ascii_lowercase())
+        .collect();
+    let skills_json = serde_json::to_value(&skills_lower).unwrap();
+
+    // Build query with optional location conditions using $2/$3 parameters
+    let query_str = match (city, country) {
+        (Some(_), Some(_)) => {
+            "SELECT * FROM candidates WHERE skills @> $1::jsonb AND location_city = $2 AND location_country = $3"
+        }
+        (Some(_), None) => {
+            "SELECT * FROM candidates WHERE skills @> $1::jsonb AND location_city = $2"
+        }
+        (None, Some(_)) => {
+            "SELECT * FROM candidates WHERE skills @> $1::jsonb AND location_country = $2"
+        }
+        (None, None) => "SELECT * FROM candidates WHERE skills @> $1::jsonb",
+    };
+
+    let mut q = query_as::<_, Candidate>(query_str).bind(skills_json);
+    if let Some(c) = city {
+        q = q.bind(c);
+    } else if let Some(co) = country {
+        q = q.bind(co);
+    }
+
+    q.fetch_all(pool).await
+}
