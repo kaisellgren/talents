@@ -179,3 +179,19 @@ async fn agent_run_with_no_matching_candidates_retries_and_returns_empty() {
         "expected no candidates after all retries exhausted"
     );
 }
+
+#[tokio::test(flavor = "current_thread")]
+async fn health_returns_ok() {
+    let ctx = setup().await;
+
+    let res = ctx
+        .client
+        .get(format!("{}/health", ctx.app_url))
+        .send()
+        .await
+        .unwrap();
+
+    assert_eq!(res.status(), 200);
+    let body: serde_json::Value = res.json().await.unwrap();
+    assert_eq!(body["status"], "ok");
+}
