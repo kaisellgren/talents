@@ -124,10 +124,11 @@ async fn search_candidates(
 }
 
 async fn run_agent(
-    Extension(_pool): Extension<PgPool>,
+    Extension(pool): Extension<PgPool>,
     Json(body): Json<AgentRequest>,
-) -> Result<Json<serde_json::Value>, Response> {
-    // Placeholder: forward prompt to SGLang in the future.
-    let response = serde_json::json!({"message": "agent called", "prompt": body.prompt});
+) -> Result<Json<crate::agents::AgentResponse>, Response> {
+    let response = crate::agents::run_agent_loop(&pool, &body.prompt)
+        .await
+        .map_err(api_error_response)?;
     Ok(Json(response))
 }
