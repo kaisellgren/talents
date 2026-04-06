@@ -1,7 +1,7 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use sqlx::{FromRow, PgPool, query_as};
 use uuid::Uuid;
-use chrono::{DateTime, Utc};
 
 #[derive(Debug, Clone, PartialEq, Eq, FromRow, Serialize, Deserialize)]
 pub struct Candidate {
@@ -19,9 +19,12 @@ pub struct Candidate {
     pub created_at: DateTime<Utc>,
 }
 
-pub async fn create_candidate(pool: &PgPool, candidate: Candidate) -> Result<Candidate, sqlx::Error> {
-    let skills_json = serde_json::to_value(&candidate.skills)
-        .map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
+pub async fn create_candidate(
+    pool: &PgPool,
+    candidate: Candidate,
+) -> Result<Candidate, sqlx::Error> {
+    let skills_json =
+        serde_json::to_value(&candidate.skills).map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
     let rec = query_as::<_, Candidate>(
         r#"
         INSERT INTO candidates (
@@ -69,8 +72,8 @@ pub async fn search_by_skills_and_location(
         .iter()
         .map(|s| s.to_ascii_lowercase())
         .collect();
-    let skills_json = serde_json::to_value(&skills_lower)
-        .map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
+    let skills_json =
+        serde_json::to_value(&skills_lower).map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
 
     // Build query with optional location conditions using $2/$3 parameters
     let query_str = match (city, country) {
@@ -89,7 +92,8 @@ pub async fn search_by_skills_and_location(
     let mut q = query_as::<_, Candidate>(query_str).bind(skills_json);
     if let Some(c) = city {
         q = q.bind(c);
-    } else if let Some(co) = country {
+    }
+    if let Some(co) = country {
         q = q.bind(co);
     }
 
