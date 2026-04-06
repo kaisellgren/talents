@@ -1,20 +1,20 @@
 mod common;
 
 use common::{
-    seed::{CandidateOverrides, seed_candidate},
+    seed::{TalentOverrides, seed_talent},
     setup,
 };
 use serde_json::{Value, json};
 
-// ─── POST /candidates ─────────────────────────────────────────────────────────
+// ─── POST /talents ─────────────────────────────────────────────────────────
 
 #[tokio::test(flavor = "current_thread")]
-async fn create_candidate_returns_201_with_id() {
+async fn create_talent_returns_201_with_id() {
     let ctx = setup().await;
 
     let res = ctx
         .client
-        .post(format!("{}/candidates", ctx.app_url))
+        .post(format!("{}/talents", ctx.app_url))
         .json(&json!({
             "name": "Kai Sellgren",
             "skills": ["rust", "axum"],
@@ -38,23 +38,23 @@ async fn create_candidate_returns_201_with_id() {
     );
 }
 
-// ─── GET /candidates/available ────────────────────────────────────────────────
+// ─── GET /talents/available ────────────────────────────────────────────────
 
 #[tokio::test(flavor = "current_thread")]
-async fn list_available_returns_only_available_candidates() {
+async fn list_available_returns_only_available_talents() {
     let ctx = setup().await;
 
-    seed_candidate(
+    seed_talent(
         &ctx.pool,
-        CandidateOverrides {
+        TalentOverrides {
             available: Some(true),
             ..Default::default()
         },
     )
     .await;
-    seed_candidate(
+    seed_talent(
         &ctx.pool,
-        CandidateOverrides {
+        TalentOverrides {
             available: Some(false),
             ..Default::default()
         },
@@ -63,7 +63,7 @@ async fn list_available_returns_only_available_candidates() {
 
     let res = ctx
         .client
-        .get(format!("{}/candidates/available", ctx.app_url))
+        .get(format!("{}/talents/available", ctx.app_url))
         .send()
         .await
         .unwrap();
@@ -74,15 +74,15 @@ async fn list_available_returns_only_available_candidates() {
     assert_eq!(body[0]["available"], true);
 }
 
-// ─── GET /candidates/search ───────────────────────────────────────────────────
+// ─── GET /talents/search ───────────────────────────────────────────────────
 
 #[tokio::test(flavor = "current_thread")]
-async fn search_by_skill_returns_matching_candidates() {
+async fn search_by_skill_returns_matching_talents() {
     let ctx = setup().await;
 
-    seed_candidate(
+    seed_talent(
         &ctx.pool,
-        CandidateOverrides {
+        TalentOverrides {
             skills: Some(vec!["rust".into(), "postgresql".into()]),
             ..Default::default()
         },
@@ -91,7 +91,7 @@ async fn search_by_skill_returns_matching_candidates() {
 
     let res = ctx
         .client
-        .get(format!("{}/candidates/search?skills=rust", ctx.app_url))
+        .get(format!("{}/talents/search?skills=rust", ctx.app_url))
         .send()
         .await
         .unwrap();
@@ -104,7 +104,7 @@ async fn search_by_skill_returns_matching_candidates() {
             .as_array()
             .unwrap()
             .contains(&serde_json::json!("rust")),
-        "returned candidate should have 'rust' skill"
+        "returned talent should have 'rust' skill"
     );
 }
 
@@ -114,7 +114,7 @@ async fn search_without_skills_param_returns_400() {
 
     let res = ctx
         .client
-        .get(format!("{}/candidates/search", ctx.app_url))
+        .get(format!("{}/talents/search", ctx.app_url))
         .send()
         .await
         .unwrap();
@@ -125,13 +125,13 @@ async fn search_without_skills_param_returns_400() {
 // ─── POST /agents/run ─────────────────────────────────────────────────────────
 
 #[tokio::test(flavor = "current_thread")]
-async fn agent_run_returns_ranked_candidates() {
+async fn agent_run_returns_ranked_talents() {
     let ctx = setup().await;
 
-    // Seed a candidate that matches what the mock triage returns (skills: ["rust"])
-    seed_candidate(
+    // Seed a talent that matches what the mock triage returns (skills: ["rust"])
+    seed_talent(
         &ctx.pool,
-        CandidateOverrides {
+        TalentOverrides {
             skills: Some(vec!["rust".into()]),
             available: Some(true),
             hourly_rate_max: Some(100),
@@ -151,9 +151,9 @@ async fn agent_run_returns_ranked_candidates() {
     assert_eq!(res.status(), 200);
     let body: Value = res.json().await.unwrap();
     assert_eq!(body["iterations"], 1);
-    let candidates = body["candidates"].as_array().unwrap();
-    assert!(!candidates.is_empty(), "expected at least one candidate");
-    let first = &candidates[0];
+    let talents = body["talents"].as_array().unwrap();
+    assert!(!talents.is_empty(), "expected at least one talent");
+    let first = &talents[0];
     assert!(first["id"].as_str().is_some());
     assert!(first["name"].as_str().is_some());
     assert!(first["score"].as_f64().is_some());
@@ -162,9 +162,9 @@ async fn agent_run_returns_ranked_candidates() {
 }
 
 #[tokio::test(flavor = "current_thread")]
-async fn agent_run_with_no_matching_candidates_retries_and_returns_empty() {
+async fn agent_run_with_no_matching_talents_retries_and_returns_empty() {
     let ctx = setup().await;
-    // No candidates seeded — constraint step will always return empty,
+    // No talents seeded — constraint step will always return empty,
     // triggering 5 retry iterations.
 
     let res = ctx
@@ -179,10 +179,10 @@ async fn agent_run_with_no_matching_candidates_retries_and_returns_empty() {
     let body: Value = res.json().await.unwrap();
     // 5 is the max retry limit defined in src/agents/mod.rs (max_iterations = 5u32)
     assert_eq!(body["iterations"], 5);
-    let candidates = body["candidates"].as_array().unwrap();
+    let talents = body["talents"].as_array().unwrap();
     assert!(
-        candidates.is_empty(),
-        "expected no candidates after all retries exhausted"
+        talents.is_empty(),
+        "expected no talents after all retries exhausted"
     );
 }
 

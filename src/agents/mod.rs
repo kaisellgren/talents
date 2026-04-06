@@ -10,7 +10,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
-pub struct AgentCandidate {
+pub struct AgentTalent {
     pub id: Uuid,
     pub name: String,
     pub score: f64,
@@ -20,25 +20,25 @@ pub struct AgentCandidate {
 
 #[derive(Debug, Serialize)]
 pub struct AgentResponse {
-    pub candidates: Vec<AgentCandidate>,
+    pub talents: Vec<AgentTalent>,
     pub iterations: u32,
 }
 
 /// Runs the full agentic loop: triage → research → constraint → ranking → summarizer.
-/// Retries up to 5 times with broadened keywords if constraint produces no candidates.
+/// Retries up to 5 times with broadened keywords if constraint produces no talents.
 pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse> {
     let max_iterations = 5u32;
     let mut previous_required_skills: Option<Vec<String>> = None;
 
     for iteration in 1..=max_iterations {
         let triage = triage::run(prompt, previous_required_skills.as_deref()).await?;
-        let candidates = research::run(pool, &triage).await?;
-        let filtered = constraint::run(candidates, &triage);
+        let talents = research::run(pool, &triage).await?;
+        let filtered = constraint::run(talents, &triage);
 
         if filtered.is_empty() {
             if iteration == max_iterations {
                 return Ok(AgentResponse {
-                    candidates: vec![],
+                    talents: vec![],
                     iterations: iteration,
                 });
             }
@@ -49,28 +49,28 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
         let rankings = ranking::run(&filtered, prompt).await?;
         let summaries = summarizer::run(&filtered, prompt).await?;
 
-        let candidates = rankings
+        let talents = rankings
             .into_iter()
             .filter_map(|r| {
-                let candidate = filtered.iter().find(|c| c.id == r.candidate_id);
-                if candidate.is_none() {
+                let talent = filtered.iter().find(|c| c.id == r.talent_id);
+                if talent.is_none() {
                     eprintln!(
-                        "ranking agent returned unknown candidate_id: {}",
-                        r.candidate_id
+                        "ranking agent returned unknown talent id: {}",
+                        r.talent_id
                     );
                 }
-                let candidate = candidate?;
-                let summary_entry = summaries.iter().find(|s| s.candidate_id == candidate.id);
+                let talent = talent?;
+                let summary_entry = summaries.iter().find(|s| s.talent_id == talent.id);
                 if summary_entry.is_none() {
                     eprintln!(
-                        "summarizer agent returned no summary for candidate_id: {}",
-                        candidate.id
+                        "summarizer agent returned no summary for talent id: {}",
+                        talent.id
                     );
                 }
                 let summary = summary_entry.map(|s| s.summary.clone()).unwrap_or_default();
-                Some(AgentCandidate {
-                    id: candidate.id,
-                    name: candidate.name.clone(),
+                Some(AgentTalent {
+                    id: talent.id,
+                    name: talent.name.clone(),
                     score: r.score,
                     reasoning: r.reasoning,
                     summary,
@@ -79,13 +79,13 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
             .collect();
 
         return Ok(AgentResponse {
-            candidates,
+            talents: talents,
             iterations: iteration,
         });
     }
 
     Ok(AgentResponse {
-        candidates: vec![],
+        talents: vec![],
         iterations: max_iterations,
     })
 }

@@ -1,4 +1,4 @@
-import type { AgentResponse, Candidate } from './types';
+import type { AgentResponse, Talent } from './types';
 
 export async function runAgent(prompt: string): Promise<AgentResponse> {
   const res = await fetch('/api/agents/run', {
@@ -10,22 +10,22 @@ export async function runAgent(prompt: string): Promise<AgentResponse> {
   return res.json();
 }
 
-export async function listAvailable(): Promise<Candidate[]> {
-  const res = await fetch('/api/candidates/available');
-  if (!res.ok) throw new Error(`Failed to fetch candidates: ${res.status}`);
+export async function listAvailable(): Promise<Talent[]> {
+  const res = await fetch('/api/talents/available');
+  if (!res.ok) throw new Error(`Failed to fetch talents: ${res.status}`);
   return res.json();
 }
 
-export async function searchCandidates(
+export async function searchTalents(
   skills: string[],
   city?: string,
   country?: string,
-): Promise<Candidate[]> {
+): Promise<Talent[]> {
   const params = new URLSearchParams();
   if (skills.length > 0) params.set('skills', skills.join(','));
   if (city) params.set('city', city);
   if (country) params.set('country', country);
-  const res = await fetch(`/api/candidates/search?${params}`);
+  const res = await fetch(`/api/talents/search?${params}`);
   if (!res.ok) throw new Error(`Search failed: ${res.status}`);
   return res.json();
 }

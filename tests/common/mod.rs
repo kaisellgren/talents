@@ -20,17 +20,17 @@ async fn connect_pool(max_connections: u32) -> PgPool {
 }
 
 /// Starts the mock LLM server and the real app on random ports.
-/// Truncates the candidates table so each test starts clean.
+/// Truncates the talents table so each test starts clean.
 /// Must be called with --test-threads=1 since it sets LLM_URL env var.
 /// Tests must use #[tokio::test(flavor = "current_thread")].
 pub async fn setup() -> TestContext {
     // Test pool — used for truncation and seeding
     let pool = connect_pool(2).await;
 
-    sqlx::query("TRUNCATE TABLE candidates RESTART IDENTITY CASCADE")
+    sqlx::query("TRUNCATE TABLE talents RESTART IDENTITY CASCADE")
         .execute(&pool)
         .await
-        .expect("Failed to truncate candidates");
+        .expect("Failed to truncate talents");
 
     // Start mock LLM server on a random port
     let mock_listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();

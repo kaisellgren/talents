@@ -1,11 +1,11 @@
 use chrono::Utc;
 use talents::agents::constraint;
 use talents::agents::triage::TriageOutput;
-use talents::db::candidate::Candidate;
+use talents::db::talent::Talent;
 use uuid::Uuid;
 
-fn make_candidate(skills: Vec<String>, available: bool, hourly_rate_max: Option<i32>) -> Candidate {
-    Candidate {
+fn make_talent(skills: Vec<String>, available: bool, hourly_rate_max: Option<i32>) -> Talent {
+    Talent {
         id: Uuid::new_v4(),
         name: "Test".to_string(),
         skills,
@@ -31,50 +31,50 @@ fn make_triage(required: Vec<&str>, max_rate: Option<i32>) -> TriageOutput {
 }
 
 #[test]
-fn keeps_available_candidate_matching_skills_and_rate() {
-    let candidates = vec![make_candidate(vec!["rust".into()], true, Some(100))];
+fn keeps_available_talent_matching_skills_and_rate() {
+    let talents = vec![make_talent(vec!["rust".into()], true, Some(100))];
     let triage = make_triage(vec!["rust"], Some(100));
-    let result = constraint::run(candidates, &triage);
+    let result = constraint::run(talents, &triage);
     assert_eq!(result.len(), 1);
 }
 
 #[test]
-fn removes_unavailable_candidate() {
-    let candidates = vec![make_candidate(vec!["rust".into()], false, Some(100))];
+fn removes_unavailable_talent() {
+    let talents = vec![make_talent(vec!["rust".into()], false, Some(100))];
     let triage = make_triage(vec!["rust"], None);
-    let result = constraint::run(candidates, &triage);
+    let result = constraint::run(talents, &triage);
     assert!(result.is_empty());
 }
 
 #[test]
-fn removes_candidate_exceeding_max_rate() {
-    let candidates = vec![make_candidate(vec!["rust".into()], true, Some(200))];
+fn removes_talent_exceeding_max_rate() {
+    let talents = vec![make_talent(vec!["rust".into()], true, Some(200))];
     let triage = make_triage(vec!["rust"], Some(100));
-    let result = constraint::run(candidates, &triage);
+    let result = constraint::run(talents, &triage);
     assert!(result.is_empty());
 }
 
 #[test]
-fn removes_candidate_missing_required_skill() {
-    let candidates = vec![make_candidate(vec!["python".into()], true, Some(80))];
+fn removes_talent_missing_required_skill() {
+    let talents = vec![make_talent(vec!["python".into()], true, Some(80))];
     let triage = make_triage(vec!["rust"], None);
-    let result = constraint::run(candidates, &triage);
+    let result = constraint::run(talents, &triage);
     assert!(result.is_empty());
 }
 
 #[test]
-fn keeps_candidate_when_no_rate_limit_specified() {
-    let candidates = vec![make_candidate(vec!["rust".into()], true, None)];
+fn keeps_talent_when_no_rate_limit_specified() {
+    let talents = vec![make_talent(vec!["rust".into()], true, None)];
     let triage = make_triage(vec!["rust"], None);
-    let result = constraint::run(candidates, &triage);
+    let result = constraint::run(talents, &triage);
     assert_eq!(result.len(), 1);
 }
 
 #[test]
-fn keeps_candidate_with_no_rate_when_max_rate_is_specified() {
-    let candidates = vec![make_candidate(vec!["rust".into()], true, None)];
+fn keeps_talent_with_no_rate_when_max_rate_is_specified() {
+    let talents = vec![make_talent(vec!["rust".into()], true, None)];
     let triage = make_triage(vec!["rust"], Some(100));
-    let result = constraint::run(candidates, &triage);
-    // Candidates with unknown rate are kept — rate cannot be proven to violate the limit.
+    let result = constraint::run(talents, &triage);
+    // Talents with unknown rate are kept — rate cannot be proven to violate the limit.
     assert_eq!(result.len(), 1);
 }

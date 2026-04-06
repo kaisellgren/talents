@@ -1,4 +1,4 @@
-export interface Candidate {
+export interface Talent {
   id: string;
   name: string;
   skills: string[];
@@ -12,7 +12,7 @@ export interface Candidate {
   created_at: string;
 }
 
-export interface AgentCandidate {
+export interface AgentTalent {
   id: string;
   name: string;
   score: number;
@@ -21,6 +21,6 @@ export interface AgentCandidate {
 }
 
 export interface AgentResponse {
-  candidates: AgentCandidate[];
+  talents: AgentTalent[];
   iterations: number;
 }

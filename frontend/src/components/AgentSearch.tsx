@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { runAgent } from '../api';
-import type { AgentResponse, Candidate } from '../types';
-import { CandidateCard } from './CandidateCard';
+import type { AgentResponse, Talent } from '../types';
+import { TalentCard } from './TalentCard';
 import * as s from '../styles.css';
 
 export function AgentSearch() {
@@ -30,7 +30,7 @@ export function AgentSearch() {
     <div className={s.page}>
       <form onSubmit={handleSubmit} className={s.page}>
         <label className={s.label}>
-          Describe the candidate you're looking for
+          Describe the talent you're looking for
           <textarea
             className={s.textarea}
             value={prompt}
@@ -49,12 +49,12 @@ export function AgentSearch() {
       {result && (
         <>
           <p className={s.iterNote}>Found in {result.iterations} iteration(s)</p>
-          {result.candidates.length === 0 ? (
-            <p className={s.empty}>No candidates matched your criteria.</p>
+          {result.talents.length === 0 ? (
+            <p className={s.empty}>No talents matched your criteria.</p>
           ) : (
             <div className={s.grid}>
-              {result.candidates.map((ac) => {
-                const stub: Candidate = {
+              {result.talents.map((ac) => {
+                const stub: Talent = {
                   id: ac.id,
                   name: ac.name,
                   skills: [],
@@ -67,7 +67,7 @@ export function AgentSearch() {
                   biography: null,
                   created_at: '',
                 };
-                return <CandidateCard key={ac.id} candidate={stub} agent={ac} />;
+                return <TalentCard key={ac.id} talent={stub} agent={ac} />;
               })}
             </div>
           )}

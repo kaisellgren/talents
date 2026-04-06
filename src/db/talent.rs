@@ -4,7 +4,7 @@ use sqlx::{FromRow, PgPool, query_as};
 use uuid::Uuid;
 
 #[derive(Debug, Clone, PartialEq, Eq, FromRow, Serialize, Deserialize)]
-pub struct Candidate {
+pub struct Talent {
     pub id: Uuid,
     pub name: String,
     #[sqlx(json)]
@@ -19,51 +19,51 @@ pub struct Candidate {
     pub created_at: DateTime<Utc>,
 }
 
-pub async fn create_candidate(
+pub async fn create_talent(
     pool: &PgPool,
-    candidate: Candidate,
-) -> Result<Candidate, sqlx::Error> {
+    talent: Talent,
+) -> Result<Talent, sqlx::Error> {
     let skills_json =
-        serde_json::to_value(&candidate.skills).map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
-    let rec = query_as::<_, Candidate>(
+        serde_json::to_value(&talent.skills).map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
+    let rec = query_as::<_, Talent>(
         r#"
-        INSERT INTO candidates (
+        INSERT INTO talents (
             name, skills, location_city, location_country,
             role, available, hourly_rate_min, hourly_rate_max, biography
         ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
         RETURNING *
         "#,
     )
-    .bind(candidate.name)
+    .bind(talent.name)
     .bind(skills_json)
-    .bind(candidate.location_city)
-    .bind(candidate.location_country)
-    .bind(candidate.role)
-    .bind(candidate.available)
-    .bind(candidate.hourly_rate_min)
-    .bind(candidate.hourly_rate_max)
-    .bind(candidate.biography)
+    .bind(talent.location_city)
+    .bind(talent.location_country)
+    .bind(talent.role)
+    .bind(talent.available)
+    .bind(talent.hourly_rate_min)
+    .bind(talent.hourly_rate_max)
+    .bind(talent.biography)
     .fetch_one(pool)
     .await?;
     Ok(rec)
 }
 
-/// Retrieve all available candidates.
-pub async fn list_available(pool: &PgPool) -> Result<Vec<Candidate>, sqlx::Error> {
-    let rows = query_as::<_, Candidate>("SELECT * FROM candidates WHERE available = true")
+/// Retrieve all available talents.
+pub async fn list_available(pool: &PgPool) -> Result<Vec<Talent>, sqlx::Error> {
+    let rows = query_as::<_, Talent>("SELECT * FROM talents WHERE available = true")
         .fetch_all(pool)
         .await?;
     Ok(rows)
 }
 
-/// Search candidates matching all required skills and optional location filters.
+/// Search talents matching all required skills and optional location filters.
 /// Uses parameterized queries throughout to prevent SQL injection.
 pub async fn search_by_skills_and_location(
     pool: &PgPool,
     required_skills: &[String],
     city: Option<&str>,
     country: Option<&str>,
-) -> Result<Vec<Candidate>, sqlx::Error> {
+) -> Result<Vec<Talent>, sqlx::Error> {
     if required_skills.is_empty() {
         return Ok(vec![]);
     }
@@ -78,18 +78,18 @@ pub async fn search_by_skills_and_location(
     // Build query with optional location conditions using $2/$3 parameters
     let query_str = match (city, country) {
         (Some(_), Some(_)) => {
-            "SELECT * FROM candidates WHERE skills @> $1::jsonb AND location_city = $2 AND location_country = $3"
+            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_city = $2 AND location_country = $3"
         }
         (Some(_), None) => {
-            "SELECT * FROM candidates WHERE skills @> $1::jsonb AND location_city = $2"
+            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_city = $2"
         }
         (None, Some(_)) => {
-            "SELECT * FROM candidates WHERE skills @> $1::jsonb AND location_country = $2"
+            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_country = $2"
         }
-        (None, None) => "SELECT * FROM candidates WHERE skills @> $1::jsonb",
+        (None, None) => "SELECT * FROM talents WHERE skills @> $1::jsonb",
     };
 
-    let mut q = query_as::<_, Candidate>(query_str).bind(skills_json);
+    let mut q = query_as::<_, Talent>(query_str).bind(skills_json);
     if let Some(c) = city {
         q = q.bind(c);
     }

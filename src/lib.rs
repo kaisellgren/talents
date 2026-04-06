@@ -10,7 +10,7 @@ use sqlx::PgPool;
 pub fn create_app(pool: PgPool) -> Router {
     Router::new()
         .route("/health", get(routes::health::handler))
-        .nest("/candidates", routes::candidate::router())
-        .route("/agents/run", post(routes::candidate::run_agent))
+        .nest("/talents", routes::talent::router())
+        .route("/agents/run", post(routes::talent::run_agent))
         .layer(Extension(pool))
 }

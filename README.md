@@ -1,6 +1,6 @@
 # Talents
 
-A Rust/Axum backend that uses an agentic loop to search and rank candidates from a PostgreSQL database using an SGLang LLM server.
+A Rust/Axum backend that uses an agentic loop to search and rank talents from a PostgreSQL database using an SGLang LLM server.
 
 ## Requirements
 
@@ -65,14 +65,14 @@ curl http://localhost:3000/health
 
 ---
 
-### Create candidate
+### Create talent
 
 ```
-POST /candidates
+POST /talents
 ```
 
 ```bash
-curl -X POST http://localhost:3000/candidates \
+curl -X POST http://localhost:3000/talents \
   -H "Content-Type: application/json" \
   -d '{
     "name": "Alice Smith",
@@ -86,33 +86,33 @@ curl -X POST http://localhost:3000/candidates \
   }'
 ```
 
-Returns `201` with the created candidate including its UUID.
+Returns `201` with the created talent including its UUID.
 
 ---
 
-### List available candidates
+### List available talents
 
 ```
-GET /candidates/available
+GET /talents/available
 ```
 
 ```bash
-curl http://localhost:3000/candidates/available
+curl http://localhost:3000/talents/available
 ```
 
-Returns all candidates where `available = true`.
+Returns all talents where `available = true`.
 
 ---
 
-### Search candidates by skills
+### Search talents by skills
 
 ```
-GET /candidates/search?skills=<comma-separated>
+GET /talents/search?skills=<comma-separated>
 ```
 
 ```bash
-curl "http://localhost:3000/candidates/search?skills=rust,postgresql"
-curl "http://localhost:3000/candidates/search?skills=rust&city=Helsinki&country=Finland"
+curl "http://localhost:3000/talents/search?skills=rust,postgresql"
+curl "http://localhost:3000/talents/search?skills=rust&city=Helsinki&country=Finland"
 ```
 
 Query parameters:
@@ -128,7 +128,7 @@ Query parameters:
 POST /agents/run
 ```
 
-Runs a multi-step agentic loop: triage → research → constraint filter → ranking → summarizer. Retries up to 5 times with broadened keywords if no candidates pass constraints.
+Runs a multi-step agentic loop: triage → research → constraint filter → ranking → summarizer. Retries up to 5 times with broadened keywords if no talents pass constraints.
 
 ```bash
 curl -X POST http://localhost:3000/agents/run \
@@ -140,7 +140,7 @@ Response:
 
 ```json
 {
-  "candidates": [
+  "talents": [
     {
       "id": "550e8400-e29b-41d4-a716-446655440000",
       "name": "Alice Smith",
@@ -154,7 +154,7 @@ Response:
 ```
 
 - `iterations` — number of retry loops executed (max 5)
-- `candidates` — empty array if no matches found after all retries
+- `talents` — empty array if no matches found after all retries
 
 ## Running tests
 

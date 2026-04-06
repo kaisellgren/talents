@@ -23,25 +23,25 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
         r#"{"required_skills":["rust"],"preferred_skills":[],"location_city":null,"location_country":null,"max_hourly_rate":null}"#
             .to_string()
     } else if system_content.contains("ranking") {
-        let candidates = parse_candidates_from_user_content(user_content);
-        if candidates.is_empty() {
-            eprintln!("mock_sglang: ranking called but no candidates parsed from user content");
+        let talents = parse_talents_from_user_content(user_content);
+        if talents.is_empty() {
+            eprintln!("mock_sglang: ranking called but no talents parsed from user content");
             return Err(StatusCode::UNPROCESSABLE_ENTITY);
         }
-        let rankings: Vec<Value> = candidates
+        let rankings: Vec<Value> = talents
             .iter()
-            .map(|id| json!({"candidate_id": id, "score": 0.9, "reasoning": "Strong match"}))
+            .map(|id| json!({"talent_id": id, "score": 0.9, "reasoning": "Strong match"}))
             .collect();
         serde_json::to_string(&json!({"rankings": rankings})).unwrap()
     } else if system_content.contains("summarizer") {
-        let candidates = parse_candidates_from_user_content(user_content);
-        if candidates.is_empty() {
-            eprintln!("mock_sglang: summarizer called but no candidates parsed from user content");
+        let talents = parse_talents_from_user_content(user_content);
+        if talents.is_empty() {
+            eprintln!("mock_sglang: summarizer called but no talents parsed from user content");
             return Err(StatusCode::UNPROCESSABLE_ENTITY);
         }
-        let summaries: Vec<Value> = candidates
+        let summaries: Vec<Value> = talents
             .iter()
-            .map(|id| json!({"candidate_id": id, "summary": "Great candidate."}))
+            .map(|id| json!({"talent_id": id, "summary": "Great talent."}))
             .collect();
         serde_json::to_string(&json!({"summaries": summaries})).unwrap()
     } else {
@@ -53,12 +53,12 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
     })))
 }
 
-/// Parses candidate UUIDs from the user message content.
-/// The format is: "Prompt: ...\n\nCandidates: [{"id": "uuid", ...}]"
-fn parse_candidates_from_user_content(user_content: &str) -> Vec<String> {
-    let candidates_part = user_content.split("Candidates: ").nth(1).unwrap_or("[]");
-    let candidates: Vec<Value> = serde_json::from_str(candidates_part).unwrap_or_default();
-    candidates
+/// Parses talent UUIDs from the user message content.
+/// The format is: "Prompt: ...\n\nTalents: [{"id": "uuid", ...}]"
+fn parse_talents_from_user_content(user_content: &str) -> Vec<String> {
+    let talents_part = user_content.split("Talents: ").nth(1).unwrap_or("[]");
+    let talents: Vec<Value> = serde_json::from_str(talents_part).unwrap_or_default();
+    talents
         .iter()
         .filter_map(|c| c["id"].as_str().map(String::from))
         .collect()

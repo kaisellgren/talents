@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { searchCandidates } from '../api';
-import type { Candidate } from '../types';
-import { CandidateCard } from './CandidateCard';
+import { searchTalents } from '../api';
+import type { Talent } from '../types';
+import { TalentCard } from './TalentCard';
 import * as s from '../styles.css';
 
 export function SkillSearch() {
   const [skillsInput, setSkillsInput] = useState('');
   const [city, setCity] = useState('');
   const [country, setCountry] = useState('');
-  const [candidates, setCandidates] = useState<Candidate[] | null>(null);
+  const [talents, setTalents] = useState<Talent[] | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,8 +22,8 @@ export function SkillSearch() {
     setLoading(true);
     setError(null);
     try {
-      const res = await searchCandidates(skills, city.trim() || undefined, country.trim() || undefined);
-      setCandidates(res);
+      const res = await searchTalents(skills, city.trim() || undefined, country.trim() || undefined);
+      setTalents(res);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
     } finally {
@@ -70,13 +70,13 @@ export function SkillSearch() {
 
       {error && <p className={s.errorMsg}>{error}</p>}
 
-      {candidates !== null && (
-        candidates.length === 0
-          ? <p className={s.empty}>No candidates matched your search.</p>
+      {talents !== null && (
+        talents.length === 0
+          ? <p className={s.empty}>No talents matched your search.</p>
           : (
             <div className={s.grid}>
-              {candidates.map((c) => (
-                <CandidateCard key={c.id} candidate={c} />
+              {talents.map((c) => (
+                <TalentCard key={c.id} talent={c} />
               ))}
             </div>
           )

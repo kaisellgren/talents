@@ -9,10 +9,10 @@ use serde::{Deserialize, Serialize};
 use sqlx::PgPool;
 use uuid::Uuid;
 
-use crate::db::candidate as db_candidate;
-use db_candidate::Candidate;
+use crate::db::talent as db_talent;
+use db_talent::Talent;
 
-/// Query parameters for candidate search.
+/// Query parameters for talent search.
 #[derive(Debug, Deserialize)]
 struct SearchParams {
     /// Comma-separated list of skills, e.g. `?skills=rust,postgresql`
@@ -21,9 +21,9 @@ struct SearchParams {
     country: Option<String>,
 }
 
-/// Request body for creating a new candidate.
+/// Request body for creating a new talent.
 #[derive(Debug, Deserialize)]
-pub struct NewCandidate {
+pub struct NewTalent {
     pub name: String,
     pub skills: Vec<String>,
     pub location_city: String,
@@ -63,16 +63,16 @@ fn api_error_response(err: anyhow::Error) -> Response {
 
 pub fn router() -> Router {
     Router::new()
-        .route("/", post(create_candidate))
+        .route("/", post(create_talent))
         .route("/available", get(list_available))
-        .route("/search", get(search_candidates))
+        .route("/search", get(search_talents))
 }
 
-async fn create_candidate(
+async fn create_talent(
     Extension(pool): Extension<PgPool>,
-    Json(body): Json<NewCandidate>,
-) -> Result<(StatusCode, Json<Candidate>), Response> {
-    let candidate = Candidate {
+    Json(body): Json<NewTalent>,
+) -> Result<(StatusCode, Json<Talent>), Response> {
+    let talent = Talent {
         id: Uuid::new_v4(), // placeholder; real insert will generate
         name: body.name,
         skills: body.skills,
@@ -86,7 +86,7 @@ async fn create_candidate(
         created_at: chrono::Utc::now(),
     };
 
-    let inserted = db_candidate::create_candidate(&pool, candidate)
+    let inserted = db_talent::create_talent(&pool, talent)
         .await
         .map_err(|e| api_error_response(anyhow::Error::from(e)))?;
     Ok((StatusCode::CREATED, Json(inserted)))
@@ -94,17 +94,17 @@ async fn create_candidate(
 
 async fn list_available(
     Extension(pool): Extension<PgPool>,
-) -> Result<Json<Vec<Candidate>>, Response> {
-    let candidates = db_candidate::list_available(&pool)
+) -> Result<Json<Vec<Talent>>, Response> {
+    let talents = db_talent::list_available(&pool)
         .await
         .map_err(|e| api_error_response(anyhow::Error::from(e)))?;
-    Ok(Json(candidates))
+    Ok(Json(talents))
 }
 
-async fn search_candidates(
+async fn search_talents(
     Extension(pool): Extension<PgPool>,
     Query(params): Query<SearchParams>,
-) -> Result<Json<Vec<Candidate>>, Response> {
+) -> Result<Json<Vec<Talent>>, Response> {
     let skills: Vec<String> = match params.skills.as_deref() {
         None | Some("") => {
             return Err(api_error_response(anyhow::anyhow!(
@@ -114,7 +114,7 @@ async fn search_candidates(
         Some(s) => s.split(',').map(|s| s.trim().to_string()).collect(),
     };
 
-    let candidates = db_candidate::search_by_skills_and_location(
+    let talents = db_talent::search_by_skills_and_location(
         &pool,
         &skills,
         params.city.as_deref(),
@@ -122,7 +122,7 @@ async fn search_candidates(
     )
     .await
     .map_err(|e| api_error_response(anyhow::Error::from(e)))?;
-    Ok(Json(candidates))
+    Ok(Json(talents))
 }
 
 pub async fn run_agent(

@@ -2,34 +2,34 @@ use anyhow::Result;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::db::candidate::Candidate;
+use crate::db::talent::Talent;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct SummarizedCandidate {
-    pub candidate_id: Uuid,
+pub struct SummarizedTalent {
+    pub talent_id: Uuid,
     pub summary: String,
 }
 
-/// Asks the LLM to generate a short per-candidate summary explaining
-/// why each candidate suits the original prompt.
-pub async fn run(candidates: &[Candidate], prompt: &str) -> Result<Vec<SummarizedCandidate>> {
-    if candidates.is_empty() {
+/// Asks the LLM to generate a short per-talent summary explaining
+/// why each talent suits the original prompt.
+pub async fn run(talents: &[Talent], prompt: &str) -> Result<Vec<SummarizedTalent>> {
+    if talents.is_empty() {
         return Ok(vec![]);
     }
 
     let system_prompt = "You are a talent summarizer. \
-        For each candidate, write a 2-3 sentence summary explaining why they are well-suited \
+        For each talent, write a 2-3 sentence summary explaining why they are well-suited \
         for the given search prompt. Be specific about their skills, location, and rate. \
-        Output JSON: {\"summaries\": [{\"candidate_id\": \"<uuid>\", \"summary\": \"<text>\"}]}";
+        Output JSON: {\"summaries\": [{\"talent_id\": \"<uuid>\", \"summary\": \"<text>\"}]}";
 
-    let candidates_json = serde_json::to_string(candidates)?;
-    let user_content = format!("Prompt: {}\n\nCandidates: {}", prompt, candidates_json);
+    let talents_json = serde_json::to_string(talents)?;
+    let user_content = format!("Prompt: {}\n\nTalents: {}", prompt, talents_json);
 
     let content = crate::sglang::chat_completion(system_prompt, &user_content).await?;
 
     #[derive(Deserialize)]
     struct SummaryResponse {
-        summaries: Vec<SummarizedCandidate>,
+        summaries: Vec<SummarizedTalent>,
     }
 
     let response: SummaryResponse = serde_json::from_str(&content).map_err(|e| {

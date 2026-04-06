@@ -1,2 +1,2 @@
-pub mod candidate;
+pub mod talent;
 pub mod health;

@@ -2,35 +2,35 @@ use anyhow::Result;
 use serde::Deserialize;
 use uuid::Uuid;
 
-use crate::db::candidate::Candidate;
+use crate::db::talent::Talent;
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct RankedCandidate {
-    pub candidate_id: Uuid,
+pub struct RankedTalent {
+    pub talent_id: Uuid,
     pub score: f64,
     pub reasoning: String,
 }
 
-/// Asks the LLM to rank candidates by relevance to the original prompt.
-/// Returns candidates sorted descending by score.
-pub async fn run(candidates: &[Candidate], prompt: &str) -> Result<Vec<RankedCandidate>> {
-    if candidates.is_empty() {
+/// Asks the LLM to rank talents by relevance to the original prompt.
+/// Returns talents sorted descending by score.
+pub async fn run(talents: &[Talent], prompt: &str) -> Result<Vec<RankedTalent>> {
+    if talents.is_empty() {
         return Ok(vec![]);
     }
 
     let system_prompt = "You are a talent ranking assistant. \
-        Given a list of candidates and a search prompt, rank the candidates by relevance. \
+        Given a list of talents and a search prompt, rank the talents by relevance. \
         Consider skills match, location preference, and cost preference as expressed in the prompt. \
-        Output JSON: {\"rankings\": [{\"candidate_id\": \"<uuid>\", \"score\": <0.0-1.0>, \"reasoning\": \"<brief reason>\"}]}";
+        Output JSON: {\"rankings\": [{\"talent_id\": \"<uuid>\", \"score\": <0.0-1.0>, \"reasoning\": \"<brief reason>\"}]}";
 
-    let candidates_json = serde_json::to_string(candidates)?;
-    let user_content = format!("Prompt: {}\n\nCandidates: {}", prompt, candidates_json);
+    let talents_json = serde_json::to_string(talents)?;
+    let user_content = format!("Prompt: {}\n\nTalents: {}", prompt, talents_json);
 
     let content = crate::sglang::chat_completion(system_prompt, &user_content).await?;
 
     #[derive(Deserialize)]
     struct RankingResponse {
-        rankings: Vec<RankedCandidate>,
+        rankings: Vec<RankedTalent>,
     }
 
     let response: RankingResponse = serde_json::from_str(&content)

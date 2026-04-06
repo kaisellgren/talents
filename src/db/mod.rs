@@ -1,1 +1,1 @@
-pub mod candidate;
+pub mod talent;
