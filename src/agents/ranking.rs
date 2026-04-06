@@ -37,7 +37,13 @@ pub async fn run(candidates: &[Candidate], prompt: &str) -> Result<Vec<RankedCan
         .map_err(|e| anyhow::anyhow!("Ranking agent returned invalid JSON: {}: {}", e, content))?;
 
     let mut rankings = response.rankings;
-    rankings.iter_mut().for_each(|r| r.score = r.score.clamp(0.0, 1.0));
-    rankings.sort_by(|a, b| b.score.partial_cmp(&a.score).unwrap_or(std::cmp::Ordering::Equal));
+    rankings
+        .iter_mut()
+        .for_each(|r| r.score = r.score.clamp(0.0, 1.0));
+    rankings.sort_by(|a, b| {
+        b.score
+            .partial_cmp(&a.score)
+            .unwrap_or(std::cmp::Ordering::Equal)
+    });
     Ok(rankings)
 }

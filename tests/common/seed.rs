@@ -12,7 +12,9 @@ pub struct CandidateOverrides {
 /// Inserts a candidate into the DB with sensible defaults, accepting field overrides.
 /// Returns the inserted Candidate with its DB-assigned id and created_at.
 pub async fn seed_candidate(pool: &PgPool, overrides: CandidateOverrides) -> Candidate {
-    let skills = overrides.skills.unwrap_or_else(|| vec!["rust".into(), "postgresql".into()]);
+    let skills = overrides
+        .skills
+        .unwrap_or_else(|| vec!["rust".into(), "postgresql".into()]);
     let skills_json = serde_json::to_value(&skills).unwrap();
 
     sqlx::query_as::<_, Candidate>(

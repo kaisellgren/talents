@@ -19,9 +19,9 @@ async fn connect_pool(max_connections: u32) -> PgPool {
         .expect("Failed to connect to DB")
 }
 
-/// Starts the mock SGLang server and the real app on random ports.
+/// Starts the mock LLM server and the real app on random ports.
 /// Truncates the candidates table so each test starts clean.
-/// Must be called with --test-threads=1 since it sets SGLANG_URL env var.
+/// Must be called with --test-threads=1 since it sets LLM_URL env var.
 /// Tests must use #[tokio::test(flavor = "current_thread")].
 pub async fn setup() -> TestContext {
     // Test pool — used for truncation and seeding
@@ -32,7 +32,7 @@ pub async fn setup() -> TestContext {
         .await
         .expect("Failed to truncate candidates");
 
-    // Start mock SGLang on a random port
+    // Start mock LLM server on a random port
     let mock_listener = std::net::TcpListener::bind("127.0.0.1:0").unwrap();
     let mock_addr = mock_listener.local_addr().unwrap();
     tokio::spawn(async move {
@@ -43,11 +43,11 @@ pub async fn setup() -> TestContext {
             .unwrap();
     });
 
-    // Point sglang client at the mock.
+    // Point LLM client at the mock.
     // Safety: tests run with --test-threads=1 and current_thread tokio flavour,
     // so no concurrent env var mutation occurs.
     unsafe {
-        std::env::set_var("SGLANG_URL", format!("http://{}", mock_addr));
+        std::env::set_var("LLM_URL", format!("http://{}", mock_addr));
     }
 
     // App pool — separate from test pool so app requests don't exhaust test connections

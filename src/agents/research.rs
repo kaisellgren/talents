@@ -2,7 +2,7 @@ use anyhow::Result;
 use sqlx::PgPool;
 
 use crate::agents::triage::TriageOutput;
-use crate::db::candidate::{search_by_skills_and_location, Candidate};
+use crate::db::candidate::{Candidate, search_by_skills_and_location};
 
 /// Queries the database for candidates matching the triage output.
 /// No LLM call — pure DB lookup in Rust.

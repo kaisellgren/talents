@@ -32,8 +32,9 @@ pub async fn run(candidates: &[Candidate], prompt: &str) -> Result<Vec<Summarize
         summaries: Vec<SummarizedCandidate>,
     }
 
-    let response: SummaryResponse = serde_json::from_str(&content)
-        .map_err(|e| anyhow::anyhow!("Summarizer agent returned invalid JSON: {}: {}", e, content))?;
+    let response: SummaryResponse = serde_json::from_str(&content).map_err(|e| {
+        anyhow::anyhow!("Summarizer agent returned invalid JSON: {}: {}", e, content)
+    })?;
 
     Ok(response.summaries)
 }

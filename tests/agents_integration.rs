@@ -1,14 +1,10 @@
+use chrono::Utc;
 use talents::agents::constraint;
 use talents::agents::triage::TriageOutput;
 use talents::db::candidate::Candidate;
-use chrono::Utc;
 use uuid::Uuid;
 
-fn make_candidate(
-    skills: Vec<String>,
-    available: bool,
-    hourly_rate_max: Option<i32>,
-) -> Candidate {
+fn make_candidate(skills: Vec<String>, available: bool, hourly_rate_max: Option<i32>) -> Candidate {
     Candidate {
         id: Uuid::new_v4(),
         name: "Test".to_string(),

@@ -1,14 +1,12 @@
-use axum::{routing::post, Json, Router};
 use axum::http::StatusCode;
-use serde_json::{json, Value};
+use axum::{Json, Router, routing::post};
+use serde_json::{Value, json};
 
 pub fn router() -> Router {
     Router::new().route("/v1/chat/completions", post(handle_completion))
 }
 
-async fn handle_completion(
-    Json(body): Json<Value>,
-) -> Result<Json<Value>, StatusCode> {
+async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, StatusCode> {
     let system_content = body["messages"]
         .as_array()
         .and_then(|msgs| msgs.iter().find(|m| m["role"] == "system"))
@@ -58,10 +56,7 @@ async fn handle_completion(
 /// Parses candidate UUIDs from the user message content.
 /// The format is: "Prompt: ...\n\nCandidates: [{"id": "uuid", ...}]"
 fn parse_candidates_from_user_content(user_content: &str) -> Vec<String> {
-    let candidates_part = user_content
-        .split("Candidates: ")
-        .nth(1)
-        .unwrap_or("[]");
+    let candidates_part = user_content.split("Candidates: ").nth(1).unwrap_or("[]");
     let candidates: Vec<Value> = serde_json::from_str(candidates_part).unwrap_or_default();
     candidates
         .iter()

@@ -1,10 +1,10 @@
 mod common;
 
 use common::{
-    seed::{seed_candidate, CandidateOverrides},
+    seed::{CandidateOverrides, seed_candidate},
     setup,
 };
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 
 // ─── POST /candidates ─────────────────────────────────────────────────────────
 
@@ -32,7 +32,10 @@ async fn create_candidate_returns_201_with_id() {
     assert_eq!(res.status(), 201);
     let body: Value = res.json().await.unwrap();
     let id_str = body["id"].as_str().expect("response should contain an id");
-    assert!(uuid::Uuid::parse_str(id_str).is_ok(), "id should be a valid UUID");
+    assert!(
+        uuid::Uuid::parse_str(id_str).is_ok(),
+        "id should be a valid UUID"
+    );
 }
 
 // ─── GET /candidates/available ────────────────────────────────────────────────
@@ -97,7 +100,10 @@ async fn search_by_skill_returns_matching_candidates() {
     let body: Vec<Value> = res.json().await.unwrap();
     assert_eq!(body.len(), 1);
     assert!(
-        body[0]["skills"].as_array().unwrap().contains(&serde_json::json!("rust")),
+        body[0]["skills"]
+            .as_array()
+            .unwrap()
+            .contains(&serde_json::json!("rust")),
         "returned candidate should have 'rust' skill"
     );
 }

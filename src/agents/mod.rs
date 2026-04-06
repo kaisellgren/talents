@@ -54,12 +54,18 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
             .filter_map(|r| {
                 let candidate = filtered.iter().find(|c| c.id == r.candidate_id);
                 if candidate.is_none() {
-                    eprintln!("ranking agent returned unknown candidate_id: {}", r.candidate_id);
+                    eprintln!(
+                        "ranking agent returned unknown candidate_id: {}",
+                        r.candidate_id
+                    );
                 }
                 let candidate = candidate?;
                 let summary_entry = summaries.iter().find(|s| s.candidate_id == candidate.id);
                 if summary_entry.is_none() {
-                    eprintln!("summarizer agent returned no summary for candidate_id: {}", candidate.id);
+                    eprintln!(
+                        "summarizer agent returned no summary for candidate_id: {}",
+                        candidate.id
+                    );
                 }
                 let summary = summary_entry.map(|s| s.summary.clone()).unwrap_or_default();
                 Some(AgentCandidate {

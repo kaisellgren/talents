@@ -13,7 +13,10 @@ pub struct TriageOutput {
 
 /// Calls the triage agent to extract structured search criteria from a prompt.
 /// Pass `previous_required_skills` on retry to instruct the LLM to broaden the search.
-pub async fn run(prompt: &str, previous_required_skills: Option<&[String]>) -> Result<TriageOutput> {
+pub async fn run(
+    prompt: &str,
+    previous_required_skills: Option<&[String]>,
+) -> Result<TriageOutput> {
     let system_prompt = if let Some(prev) = previous_required_skills {
         format!(
             "You are a talent search triage assistant. Extract search criteria from the prompt as JSON.\n\
