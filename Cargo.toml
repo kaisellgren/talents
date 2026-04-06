@@ -14,3 +14,5 @@ anyhow = "1.0"
 uuid = { version = "1.23.0", features = ["v4", "serde"] }
 chrono = { version = "0.4.44", features = ["serde"] }
 reqwest = { version = "0.11", features = ["json"] }
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
