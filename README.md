@@ -40,6 +40,16 @@ cargo run
 
 Server listens on `http://127.0.0.1:3000`.
 
+**5. Start the frontend** (optional)
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+Frontend at `http://localhost:5173`. Proxies `/api` → `http://localhost:3000`.
+
 ## API
 
 ### Health

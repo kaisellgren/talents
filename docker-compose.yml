@@ -19,19 +19,59 @@ services:
       timeout: 5s
       retries: 5
 
+  vllm:
+    profiles: [vllm]
+    image: docker.io/vllm/vllm-openai:latest
+    container_name: vllm
+    restart: unless-stopped
+    ipc: host
+    shm_size: '16gb'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    environment:
+      HUGGING_FACE_HUB_TOKEN: ${HUGGING_FACE_HUB_TOKEN:-}
+    ports:
+      - "9000:8000"
+    command: >
+      --model Qwen/Qwen2.5-3B-Instruct
+      --host 0.0.0.0
+      --port 8000
+      --tensor-parallel-size 1
+    volumes:
+      - ~/.cache/huggingface:/root/.cache/huggingface
+
   sglang:
+    profiles: [sglang]
     image: docker.io/lmsysorg/sglang:latest
     container_name: sglang
     restart: unless-stopped
+    ipc: host
+    shm_size: '64gb'
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
     environment:
-      MODEL_NAME: "microsoft/phi-2"
+      MODEL_NAME: "Qwen/Qwen2.5-3B-Instruct"
+      NCCL_P2P_DISABLE: "1"
+      NCCL_SHM_DISABLE: "1"
     ports:
-      - "9000:80"
+      - "9001:80"
     command: >
       python3 -m sglang.launch_server
       --model-path ${MODEL_NAME}
       --host 0.0.0.0
       --port 80
+      --cuda-graph-max-bs 16
+      --tp 1
     volumes:
       - ~/.cache/huggingface:/root/.cache/huggingface
 
