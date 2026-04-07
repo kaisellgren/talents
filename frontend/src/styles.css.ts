@@ -3,89 +3,114 @@ import { style } from '@vanilla-extract/css';
 export const page = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: '16px',
+  gap: '20px',
 });
 
 export const grid = style({
   display: 'grid',
-  gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+  gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))',
   gap: '16px',
 });
 
 export const label = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: '6px',
-  fontSize: '0.9rem',
-  color: '#aaaacc',
+  gap: '8px',
+  fontSize: '0.82rem',
+  fontWeight: 500,
+  color: '#6d758c',
+  letterSpacing: '0.03em',
+  textTransform: 'uppercase',
 });
 
 export const input = style({
-  background: '#1a1a2e',
-  border: '1px solid #2a2a4a',
-  borderRadius: '6px',
-  padding: '8px 12px',
-  color: '#e0e0ff',
-  fontSize: '0.95rem',
+  background: 'rgba(9, 19, 40, 0.7)',
+  border: '1px solid rgba(163, 166, 255, 0.12)',
+  borderRadius: '10px',
+  padding: '11px 16px',
+  color: '#dee5ff',
+  fontSize: '0.9rem',
   outline: 'none',
+  fontFamily: "'Inter', sans-serif",
+  transition: 'border-color 0.15s ease, background 0.15s ease',
   ':focus': {
-    borderColor: '#5555cc',
+    borderColor: 'rgba(163, 166, 255, 0.4)',
+    background: 'rgba(15, 25, 48, 0.9)',
+  },
+  '::placeholder': {
+    color: '#40485d',
   },
 });
 
 export const textarea = style({
-  background: '#1a1a2e',
-  border: '1px solid #2a2a4a',
-  borderRadius: '6px',
-  padding: '10px 12px',
-  color: '#e0e0ff',
-  fontSize: '0.95rem',
+  background: 'rgba(9, 19, 40, 0.7)',
+  border: '1px solid rgba(163, 166, 255, 0.12)',
+  borderRadius: '10px',
+  padding: '14px 16px',
+  color: '#dee5ff',
+  fontSize: '0.9rem',
   outline: 'none',
   resize: 'vertical',
-  minHeight: '100px',
-  fontFamily: 'inherit',
+  minHeight: '120px',
+  fontFamily: "'Inter', sans-serif",
+  lineHeight: 1.6,
+  transition: 'border-color 0.15s ease, background 0.15s ease',
   ':focus': {
-    borderColor: '#5555cc',
+    borderColor: 'rgba(163, 166, 255, 0.4)',
+    background: 'rgba(15, 25, 48, 0.9)',
+  },
+  '::placeholder': {
+    color: '#40485d',
   },
 });
 
 export const button = style({
-  background: '#3a3aaa',
-  color: '#ffffff',
+  background: 'linear-gradient(135deg, #a3a6ff 0%, #9396ff 100%)',
+  color: '#0f00a4',
   border: 'none',
-  borderRadius: '6px',
-  padding: '10px 20px',
-  fontSize: '0.95rem',
-  fontWeight: 600,
+  borderRadius: '10px',
+  padding: '11px 24px',
+  fontSize: '0.875rem',
+  fontWeight: 700,
   cursor: 'pointer',
   alignSelf: 'flex-start',
+  fontFamily: "'Inter', sans-serif",
+  letterSpacing: '0.01em',
+  transition: 'opacity 0.15s ease, transform 0.15s ease',
   ':hover': {
-    background: '#4a4acc',
+    opacity: 0.9,
+    transform: 'translateY(-1px)',
   },
   ':disabled': {
-    opacity: 0.5,
+    opacity: 0.35,
     cursor: 'not-allowed',
+    transform: 'none',
   },
 });
 
 export const errorMsg = style({
-  color: '#ff6666',
-  fontSize: '0.9rem',
+  color: '#ff6e84',
+  fontSize: '0.875rem',
+  fontFamily: "'Inter', sans-serif",
 });
 
 export const spinner = style({
-  color: '#7777cc',
-  fontSize: '0.9rem',
+  color: '#6d758c',
+  fontSize: '0.875rem',
+  fontFamily: "'Inter', sans-serif",
 });
 
 export const empty = style({
-  color: '#666688',
-  fontSize: '0.9rem',
+  color: '#40485d',
+  fontSize: '0.875rem',
+  fontFamily: "'Inter', sans-serif",
 });
 
 export const iterNote = style({
-  color: '#7777aa',
-  fontSize: '0.85rem',
+  color: '#6d758c',
+  fontSize: '0.8rem',
+  fontFamily: "'Inter', sans-serif",
+  letterSpacing: '0.02em',
 });
 
 export const row = style({

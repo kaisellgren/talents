@@ -10,8 +10,12 @@ export async function runAgent(prompt: string): Promise<AgentResponse> {
   return res.json();
 }
 
-export async function listAvailable(): Promise<Talent[]> {
-  const res = await fetch('/api/talents/available');
+export async function listAvailable(limit?: number, offset?: number): Promise<Talent[]> {
+  const params = new URLSearchParams();
+  if (limit !== undefined) params.set('limit', String(limit));
+  if (offset !== undefined) params.set('offset', String(offset));
+  const query = params.toString() ? `?${params}` : '';
+  const res = await fetch(`/api/talents/available${query}`);
   if (!res.ok) throw new Error(`Failed to fetch talents: ${res.status}`);
   return res.json();
 }

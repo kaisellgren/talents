@@ -48,11 +48,15 @@ pub async fn create_talent(
     Ok(rec)
 }
 
-/// Retrieve all available talents.
-pub async fn list_available(pool: &PgPool) -> Result<Vec<Talent>, sqlx::Error> {
-    let rows = query_as::<_, Talent>("SELECT * FROM talents WHERE available = true")
-        .fetch_all(pool)
-        .await?;
+/// Retrieve available talents with pagination.
+pub async fn list_available(pool: &PgPool, limit: i64, offset: i64) -> Result<Vec<Talent>, sqlx::Error> {
+    let rows = query_as::<_, Talent>(
+        "SELECT * FROM talents WHERE available = true ORDER BY created_at DESC LIMIT $1 OFFSET $2"
+    )
+    .bind(limit)
+    .bind(offset)
+    .fetch_all(pool)
+    .await?;
     Ok(rows)
 }
 

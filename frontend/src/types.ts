@@ -18,6 +18,13 @@ export interface AgentTalent {
   score: number;
   reasoning: string;
   summary: string;
+  skills: string[];
+  location_city: string;
+  location_country: string;
+  role: string | null;
+  hourly_rate_min: number | null;
+  hourly_rate_max: number | null;
+  biography: string | null;
 }
 
 export interface AgentResponse {

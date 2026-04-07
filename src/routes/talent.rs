@@ -12,6 +12,13 @@ use uuid::Uuid;
 use crate::db::talent as db_talent;
 use db_talent::Talent;
 
+/// Query parameters for paginated listing.
+#[derive(Debug, Deserialize)]
+struct PaginationParams {
+    limit: Option<i64>,
+    offset: Option<i64>,
+}
+
 /// Query parameters for talent search.
 #[derive(Debug, Deserialize)]
 struct SearchParams {
@@ -94,8 +101,11 @@ async fn create_talent(
 
 async fn list_available(
     Extension(pool): Extension<PgPool>,
+    Query(params): Query<PaginationParams>,
 ) -> Result<Json<Vec<Talent>>, Response> {
-    let talents = db_talent::list_available(&pool)
+    let limit = params.limit.unwrap_or(30).min(100).max(1);
+    let offset = params.offset.unwrap_or(0).max(0);
+    let talents = db_talent::list_available(&pool, limit, offset)
         .await
         .map_err(|e| api_error_response(anyhow::Error::from(e)))?;
     Ok(Json(talents))
