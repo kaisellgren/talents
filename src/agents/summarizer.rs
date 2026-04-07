@@ -19,8 +19,8 @@ pub async fn run(talents: &[Talent], prompt: &str) -> Result<Vec<SummarizedTalen
 
     let system_prompt = "You are a talent summarizer. \
         For each talent, write a 2-3 sentence summary explaining why they are well-suited \
-        for the given search prompt. Be specific about their skills, location, and rate. \
-        Output JSON: {\"summaries\": [{\"talent_id\": \"<uuid>\", \"summary\": \"<text>\"}]}";
+        for the given search prompt. Be specific about their skills and location. Never mention rate, price, cost or fees. \
+        Output must be the following JSON including the talent_id field: {\"summaries\": [{\"talent_id\": \"<uuid>\", \"summary\": \"<text>\"}]}";
 
     let talents_json = serde_json::to_string(talents)?;
     let user_content = format!("Prompt: {}\n\nTalents: {}", prompt, talents_json);
