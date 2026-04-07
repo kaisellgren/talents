@@ -1,5 +1,6 @@
 import { useState, useRef } from 'react';
 import { Routes, Route, NavLink } from 'react-router-dom';
+import { LayoutGrid, Search, Sparkles } from 'lucide-react';
 import { runAgent } from './api';
 import type { AgentResponse, AgentTalent, Talent } from './types';
 import { TalentCard } from './components/TalentCard';
@@ -71,15 +72,19 @@ function SearchPage() {
         </p>
 
         <form onSubmit={handleSearch} className={s.searchForm}>
-          <input
-            className={s.searchInput}
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe the talent you're looking for…"
-            disabled={loading}
-          />
+          <div className={s.searchInputShell}>
+            <Search className={s.searchInputIcon} aria-hidden="true" />
+            <input
+              className={s.searchInput}
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe the talent you're looking for…"
+              disabled={loading}
+            />
+          </div>
           <button className={s.searchButton} type="submit" disabled={loading || !prompt.trim()}>
-            {loading ? 'Searching…' : 'Search with AI'}
+            <Sparkles className={s.buttonIcon} aria-hidden="true" />
+            <span>{loading ? 'Searching…' : 'Search with AI'}</span>
           </button>
         </form>
 
@@ -137,8 +142,18 @@ function App() {
 
       <header className={s.header}>
         <nav className={s.nav}>
-          <NavLink to="/" end className={({ isActive }) => isActive ? s.navLinkActive : s.navLink}>Search</NavLink>
-          <NavLink to="/catalog" className={({ isActive }) => isActive ? s.navLinkActive : s.navLink}>Catalog</NavLink>
+          <NavLink to="/" end className={({ isActive }) => isActive ? s.navLinkActive : s.navLink}>
+            <span className={s.navLinkContent}>
+              <Search className={s.navIcon} aria-hidden="true" />
+              <span>Search</span>
+            </span>
+          </NavLink>
+          <NavLink to="/catalog" className={({ isActive }) => isActive ? s.navLinkActive : s.navLink}>
+            <span className={s.navLinkContent}>
+              <LayoutGrid className={s.navIcon} aria-hidden="true" />
+              <span>Catalog</span>
+            </span>
+          </NavLink>
         </nav>
       </header>
 

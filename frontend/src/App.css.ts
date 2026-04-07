@@ -69,7 +69,7 @@ export const title = style({
 
 export const nav = style({
   display: 'flex',
-  gap: '4px',
+  gap: '1rem',
   margin: '0 auto',
 });
 
@@ -78,7 +78,7 @@ export const navLink = style({
   textDecoration: 'none',
   fontSize: '0.875rem',
   fontWeight: 500,
-  padding: '6px 4px',
+  padding: '6px 10px',
   transition: 'color 0.15s ease',
   ':hover': {
     color: '#a3aac4',
@@ -90,8 +90,20 @@ export const navLinkActive = style({
   textDecoration: 'none',
   fontSize: '0.875rem',
   fontWeight: 500,
-  padding: '6px 4px',
+  padding: '6px 10px',
   borderBottom: '1px solid #a3a6ff',
+});
+
+export const navLinkContent = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
+});
+
+export const navIcon = style({
+  width: '15px',
+  height: '15px',
+  flexShrink: 0,
 });
 
 /* ── Hero ── */
@@ -146,26 +158,49 @@ export const heroNote = style({
 export const searchForm = style({
   display: 'flex',
   gap: '10px',
+  alignItems: 'stretch',
   width: '100%',
   maxWidth: '640px',
   margin: '0 0 20px',
 });
 
-export const searchInput = style({
+export const searchInputShell = style({
+  position: 'relative',
   flex: 1,
+  display: 'flex',
+  alignItems: 'center',
   background: 'rgba(15, 25, 48, 0.8)',
   border: '1px solid rgba(163, 166, 255, 0.15)',
   borderRadius: '10px',
-  padding: '13px 18px',
+  transition: 'border-color 0.15s ease, background 0.15s ease',
+  ':focus-within': {
+    borderColor: 'rgba(163, 166, 255, 0.4)',
+    background: 'rgba(20, 31, 56, 0.9)',
+  },
+});
+
+export const searchInputIcon = style({
+  position: 'absolute',
+  top: '50%',
+  left: '16px',
+  transform: 'translateY(-50%)',
+  width: '18px',
+  height: '18px',
+  color: '#6d758c',
+  pointerEvents: 'none',
+  zIndex: 1,
+});
+
+export const searchInput = style({
+  width: '100%',
+  background: 'transparent',
+  border: 'none',
+  borderRadius: '10px',
+  padding: '13px 18px 13px 46px',
   color: '#dee5ff',
   fontSize: '1.05rem',
   outline: 'none',
   fontFamily: "'Inter', sans-serif",
-  transition: 'border-color 0.15s ease, background 0.15s ease',
-  ':focus': {
-    borderColor: 'rgba(163, 166, 255, 0.4)',
-    background: 'rgba(20, 31, 56, 0.9)',
-  },
   '::placeholder': {
     color: '#8891a8',
   },
@@ -184,6 +219,9 @@ export const searchButton = style({
   fontWeight: 700,
   cursor: 'pointer',
   fontFamily: "'Inter', sans-serif",
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '8px',
   whiteSpace: 'nowrap',
   transition: 'opacity 0.15s ease, transform 0.15s ease',
   ':hover': {
@@ -195,6 +233,12 @@ export const searchButton = style({
     cursor: 'not-allowed',
     transform: 'none',
   },
+});
+
+export const buttonIcon = style({
+  width: '16px',
+  height: '16px',
+  flexShrink: 0,
 });
 
 export const suggestions = style({

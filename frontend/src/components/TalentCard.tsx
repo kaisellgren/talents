@@ -9,9 +9,9 @@ interface TalentCardProps {
 export function TalentCard({ talent, agent }: TalentCardProps) {
   const rateStr =
     talent.hourly_rate_min != null && talent.hourly_rate_max != null
-      ? `$${talent.hourly_rate_min}–$${talent.hourly_rate_max}/hr`
+      ? `${talent.hourly_rate_min}–${talent.hourly_rate_max} €/hr`
       : talent.hourly_rate_min != null
-        ? `from $${talent.hourly_rate_min}/hr`
+        ? `from ${talent.hourly_rate_min} €/hr`
         : null;
 
   const scoreDisplay = agent ? `${(agent.score * 100).toFixed(0)}% match` : null;
