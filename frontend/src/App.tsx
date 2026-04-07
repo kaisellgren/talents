@@ -8,9 +8,9 @@ import { CatalogPage } from './pages/CatalogPage';
 import * as s from './App.css';
 
 const SUGGESTIONS = [
-  'Lead Product Designers',
-  'Rust Systems Engineers',
-  'AI Research Scientists',
+  'Looking for a lead product designer',
+  'I need a Rust developer with cloud expertise',
+  'UI designer who has experience with Figma',
 ];
 
 function SearchPage() {
