@@ -58,19 +58,21 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
         let talents = rankings
             .into_iter()
             .filter_map(|r| {
-                let talent = filtered.iter().find(|c| c.id == r.talent_id);
+                let talent = filtered.get(r.talent_index);
                 if talent.is_none() {
                     eprintln!(
-                        "ranking agent returned unknown talent id: {}",
-                        r.talent_id
+                        "ranking agent returned unknown talent index: {}",
+                        r.talent_index
                     );
                 }
                 let talent = talent?;
-                let summary_entry = summaries.iter().find(|s| s.talent_id == talent.id);
+                let summary_entry = summaries
+                    .iter()
+                    .find(|s| s.talent_index == r.talent_index);
                 if summary_entry.is_none() {
                     eprintln!(
-                        "summarizer agent returned no summary for talent id: {}",
-                        talent.id
+                        "summarizer agent returned no summary for talent index: {}",
+                        r.talent_index
                     );
                 }
                 let summary = summary_entry.map(|s| s.summary.clone()).unwrap_or_default();

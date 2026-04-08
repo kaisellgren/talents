@@ -1,12 +1,11 @@
 use anyhow::Result;
 use serde::Deserialize;
-use uuid::Uuid;
 
 use crate::db::talent::Talent;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct RankedTalent {
-    pub talent_id: Uuid,
+    pub talent_index: usize,
     pub score: f64,
     pub reasoning: String,
 }
@@ -21,10 +20,14 @@ pub async fn run(talents: &[Talent], prompt: &str) -> Result<Vec<RankedTalent>> 
     let system_prompt = "You are a talent ranking assistant. \
         Given a list of talents and a search prompt, rank the talents by relevance. \
         Consider skills match, location preference, and cost preference as expressed in the prompt. \
-        Output JSON: {\"rankings\": [{\"talent_id\": \"<uuid>\", \"score\": <0.0-1.0>, \"reasoning\": \"<brief reason>\"}]}";
+        Output JSON: {\"rankings\": [{\"talent_index\": <zero-based integer>, \"score\": <0.0-1.0>, \"reasoning\": \"<brief reason>\"}]}. \
+        Use the zero-based index of the talent in the provided list. Do not invent or modify IDs.";
 
-    let talents_json = serde_json::to_string(talents)?;
-    let user_content = format!("Prompt: {}\n\nTalents: {}", prompt, talents_json);
+    let talents_json = serde_json::to_string_pretty(talents)?;
+    let user_content = format!(
+        "Prompt: {}\n\nTalents are listed in order. Use the zero-based position as talent_index.\n\nTalents: {}",
+        prompt, talents_json
+    );
 
     let content = crate::llm::chat_completion(system_prompt, &user_content).await?;
 

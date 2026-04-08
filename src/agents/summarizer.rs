@@ -1,12 +1,11 @@
 use anyhow::Result;
 use serde::Deserialize;
-use uuid::Uuid;
 
 use crate::db::talent::Talent;
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct SummarizedTalent {
-    pub talent_id: Uuid,
+    pub talent_index: usize,
     pub summary: String,
 }
 
@@ -20,10 +19,14 @@ pub async fn run(talents: &[Talent], prompt: &str) -> Result<Vec<SummarizedTalen
     let system_prompt = "You are a talent summarizer. \
         For each talent, write a 2-3 sentence summary explaining why they are well-suited \
         for the given search prompt. Be specific about their skills and location. Never mention rate, price, cost or fees. \
-        Output must be the following JSON including the talent_id field: {\"summaries\": [{\"talent_id\": \"<uuid>\", \"summary\": \"<text>\"}]}";
+        Output must be the following JSON including the talent_index field: {\"summaries\": [{\"talent_index\": <zero-based integer>, \"summary\": \"<text>\"}]}. \
+        Use the zero-based index of the talent in the provided list. Do not invent or modify IDs.";
 
-    let talents_json = serde_json::to_string(talents)?;
-    let user_content = format!("Prompt: {}\n\nTalents: {}", prompt, talents_json);
+    let talents_json = serde_json::to_string_pretty(talents)?;
+    let user_content = format!(
+        "Prompt: {}\n\nTalents are listed in order. Use the zero-based position as talent_index.\n\nTalents: {}",
+        prompt, talents_json
+    );
 
     let content = crate::llm::chat_completion(system_prompt, &user_content).await?;
 
