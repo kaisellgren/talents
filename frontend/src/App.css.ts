@@ -169,7 +169,7 @@ export const searchForm = style({
   gap: '10px',
   alignItems: 'stretch',
   width: '100%',
-  maxWidth: '640px',
+  maxWidth: '800px',
   margin: '0 0 20px',
 });
 
@@ -190,7 +190,7 @@ export const searchInputShell = style({
 
 export const searchInputIcon = style({
   position: 'absolute',
-  top: '50%',
+  top: '35%',
   left: '16px',
   transform: 'translateY(-50%)',
   width: '18px',
@@ -216,6 +216,9 @@ export const searchInput = style({
   ':disabled': {
     opacity: 0.6,
   },
+  overflow: 'hidden',
+  overflowWrap: 'break-word',
+  whiteSpace: 'pre-wrap',
 });
 
 export const searchButton = style({
@@ -250,28 +253,47 @@ export const buttonIcon = style({
   flexShrink: 0,
 });
 
-export const suggestions = style({
+export const promptCloud = style({
   display: 'flex',
-  gap: '8px',
-  flexWrap: 'wrap',
-  justifyContent: 'center',
-  margin: '0 0 28px',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '14px',
+  margin: '4px 0 28px',
+  maxWidth: '720px',
+  width: '100%',
 });
 
-export const suggestionChip = style({
-  background: 'rgba(25, 37, 64, 0.6)',
+export const promptCloudLabel = style({
+  fontSize: '0.68rem',
+  fontWeight: 700,
+  letterSpacing: '0.12em',
+  textTransform: 'uppercase',
+  color: '#40485d',
+  margin: 0,
+  fontFamily: "'Inter', sans-serif",
+});
+
+export const promptChips = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  gap: '8px',
+  justifyContent: 'center',
+});
+
+export const promptChip = style({
+  background: 'rgba(25, 37, 64, 0.5)',
   border: '1px solid rgba(163, 166, 255, 0.1)',
   borderRadius: '999px',
-  padding: '6px 14px',
-  fontSize: '0.95rem',
-  color: '#a3aac4',
+  padding: '5px 13px',
+  fontSize: '0.82rem',
+  color: '#8891a8',
   cursor: 'pointer',
   fontFamily: "'Inter', sans-serif",
   transition: 'all 0.15s ease',
   ':hover': {
     color: '#dee5ff',
-    borderColor: 'rgba(163, 166, 255, 0.25)',
-    background: 'rgba(163, 166, 255, 0.07)',
+    borderColor: 'rgba(163, 166, 255, 0.3)',
+    background: 'rgba(163, 166, 255, 0.08)',
   },
 });
 
