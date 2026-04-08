@@ -122,7 +122,7 @@ export const heroSection = style({
   flexDirection: 'column',
   alignItems: 'center',
   textAlign: 'center',
-  padding: '96px 48px 80px',
+  padding: '64px 48px 32px',
   position: 'relative',
   zIndex: 1,
 });
@@ -268,7 +268,7 @@ export const promptCloudLabel = style({
   fontWeight: 700,
   letterSpacing: '0.12em',
   textTransform: 'uppercase',
-  color: '#40485d',
+  color: '#596482',
   margin: 0,
   fontFamily: "'Inter', sans-serif",
 });
