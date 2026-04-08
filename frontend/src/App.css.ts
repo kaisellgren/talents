@@ -22,7 +22,7 @@ export const glowTopRight = style({
   width: '600px',
   height: '600px',
   borderRadius: '50%',
-  background: 'radial-gradient(circle, rgba(163, 166, 255, 0.09) 0%, transparent 70%)',
+  background: 'radial-gradient(circle, rgba(163, 166, 255, 0.12) 0%, transparent 70%)',
   pointerEvents: 'none',
   zIndex: 0,
 });
@@ -35,6 +35,31 @@ export const glowBottomLeft = style({
   height: '500px',
   borderRadius: '50%',
   background: 'radial-gradient(circle, rgba(147, 150, 255, 0.05) 0%, transparent 70%)',
+  pointerEvents: 'none',
+  zIndex: 0,
+});
+
+export const glowHeroCenter = style({
+  position: 'fixed',
+  top: '-100px',
+  left: '50%',
+  transform: 'translateX(-50%)',
+  width: '900px',
+  height: '700px',
+  borderRadius: '50%',
+  background: 'radial-gradient(ellipse, rgba(25, 37, 80, 0.55) 0%, transparent 65%)',
+  pointerEvents: 'none',
+  zIndex: 0,
+});
+
+export const actionZoneBlur = style({
+  position: 'fixed',
+  bottom: 0,
+  left: 0,
+  right: 0,
+  height: '50vh',
+  background: 'radial-gradient(50% 50% at 50% 100%, rgba(0, 0, 0, 0.45) 0%, rgba(6, 14, 32, 0) 100%)',
+  filter: 'blur(40px)',
   pointerEvents: 'none',
   zIndex: 0,
 });

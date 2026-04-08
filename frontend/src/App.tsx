@@ -180,6 +180,8 @@ function App() {
     <div className={s.root}>
       <div className={s.glowTopRight} />
       <div className={s.glowBottomLeft} />
+      <div className={s.glowHeroCenter} />
+      <div className={s.actionZoneBlur} />
 
       <header className={s.header}>
         <nav className={s.nav}>
