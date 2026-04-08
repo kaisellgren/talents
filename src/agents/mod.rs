@@ -53,7 +53,18 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
         }
 
         let rankings = ranking::run(&filtered, prompt).await?;
-        let summaries = summarizer::run(&filtered, prompt).await?;
+        let summarized_inputs: Vec<summarizer::SummarizerTalentInput> = rankings
+            .iter()
+            .take(6)
+            .filter_map(|r| filtered.get(r.talent_index).map(|talent| summarizer::SummarizerTalentInput {
+                talent_index: r.talent_index,
+                name: talent.name.clone(),
+                skills: talent.skills.clone(),
+                location: format!("{}, {}", talent.location_city, talent.location_country),
+                role: talent.role.clone(),
+            }))
+            .collect();
+        let summaries = summarizer::run(&summarized_inputs, prompt).await?;
 
         let talents = rankings
             .into_iter()
@@ -66,9 +77,7 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
                     );
                 }
                 let talent = talent?;
-                let summary_entry = summaries
-                    .iter()
-                    .find(|s| s.talent_index == r.talent_index);
+                let summary_entry = summaries.iter().find(|s| s.talent_index == r.talent_index);
                 if summary_entry.is_none() {
                     eprintln!(
                         "summarizer agent returned no summary for talent index: {}",
