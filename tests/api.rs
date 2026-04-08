@@ -2,19 +2,19 @@ mod common;
 
 use common::{
     seed::{TalentOverrides, seed_talent},
-    setup,
+    shared_server,
 };
 use serde_json::{Value, json};
 
 // ─── POST /talents ─────────────────────────────────────────────────────────
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn create_talent_returns_201_with_id() {
-    let ctx = setup().await;
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
 
-    let res = ctx
-        .client
-        .post(format!("{}/talents", ctx.app_url))
+    let res = client
+        .post(format!("{}/talents", srv.app_url))
         .json(&json!({
             "name": "Kai Sellgren",
             "skills": ["rust", "axum"],
@@ -39,20 +39,14 @@ async fn create_talent_returns_201_with_id() {
 
 // ─── GET /talents/available ────────────────────────────────────────────────
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn list_available_returns_only_available_talents() {
-    let ctx = setup().await;
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
 
+    // Ensure at least one unavailable talent exists so the filter is meaningful
     seed_talent(
-        &ctx.pool,
-        TalentOverrides {
-            available: Some(true),
-            ..Default::default()
-        },
-    )
-    .await;
-    seed_talent(
-        &ctx.pool,
+        &srv.pool,
         TalentOverrides {
             available: Some(false),
             ..Default::default()
@@ -60,60 +54,71 @@ async fn list_available_returns_only_available_talents() {
     )
     .await;
 
-    let res = ctx
-        .client
-        .get(format!("{}/talents/available", ctx.app_url))
+    let res = client
+        .get(format!("{}/talents/available", srv.app_url))
         .send()
         .await
         .unwrap();
 
     assert_eq!(res.status(), 200);
     let body: Vec<Value> = res.json().await.unwrap();
-    assert_eq!(body.len(), 1);
-    assert_eq!(body[0]["available"], true);
+    assert!(!body.is_empty(), "expected at least one available talent");
+    assert!(
+        body.iter().all(|t| t["available"] == true),
+        "all returned talents should be available"
+    );
 }
 
 // ─── GET /talents/search ───────────────────────────────────────────────────
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn search_by_skill_returns_matching_talents() {
-    let ctx = setup().await;
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
+
+    // Use a unique skill name to avoid collisions with other data
+    let unique_skill = format!(
+        "skill{}",
+        &uuid::Uuid::new_v4().to_string().replace('-', "")[..8]
+    );
 
     seed_talent(
-        &ctx.pool,
+        &srv.pool,
         TalentOverrides {
-            skills: Some(vec!["rust".into(), "postgresql".into()]),
+            skills: Some(vec![unique_skill.clone()]),
             ..Default::default()
         },
     )
     .await;
 
-    let res = ctx
-        .client
-        .get(format!("{}/talents/search?skills=rust", ctx.app_url))
+    let res = client
+        .get(format!(
+            "{}/talents/search?skills={}",
+            srv.app_url, unique_skill
+        ))
         .send()
         .await
         .unwrap();
 
     assert_eq!(res.status(), 200);
     let body: Vec<Value> = res.json().await.unwrap();
-    assert_eq!(body.len(), 1);
+    assert!(!body.is_empty(), "expected at least one matching talent");
     assert!(
-        body[0]["skills"]
+        body.iter().all(|t| t["skills"]
             .as_array()
             .unwrap()
-            .contains(&serde_json::json!("rust")),
-        "returned talent should have 'rust' skill"
+            .contains(&json!(unique_skill))),
+        "all returned talents should have the searched skill"
     );
 }
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn search_without_skills_param_returns_400() {
-    let ctx = setup().await;
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
 
-    let res = ctx
-        .client
-        .get(format!("{}/talents/search", ctx.app_url))
+    let res = client
+        .get(format!("{}/talents/search", srv.app_url))
         .send()
         .await
         .unwrap();
@@ -123,13 +128,14 @@ async fn search_without_skills_param_returns_400() {
 
 // ─── POST /agents/run ─────────────────────────────────────────────────────────
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn agent_run_returns_ranked_talents() {
-    let ctx = setup().await;
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
 
     // Seed a talent that matches what the mock triage returns (skills: ["rust"])
     seed_talent(
-        &ctx.pool,
+        &srv.pool,
         TalentOverrides {
             skills: Some(vec!["rust".into()]),
             available: Some(true),
@@ -139,9 +145,8 @@ async fn agent_run_returns_ranked_talents() {
     )
     .await;
 
-    let res = ctx
-        .client
-        .post(format!("{}/agents/run", ctx.app_url))
+    let res = client
+        .post(format!("{}/agents/run", srv.app_url))
         .json(&json!({"prompt": "I need a Rust developer in Helsinki"}))
         .send()
         .await
@@ -160,15 +165,14 @@ async fn agent_run_returns_ranked_talents() {
     assert!(first["summary"].as_str().is_some());
 }
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn agent_run_with_no_matching_talents_retries_and_returns_empty() {
-    let ctx = setup().await;
-    // No talents seeded — constraint step will always return empty,
-    // triggering 5 retry iterations.
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
 
-    let res = ctx
-        .client
-        .post(format!("{}/agents/run", ctx.app_url))
+    // Use a skill so rare it won't match any seeded talent
+    let res = client
+        .post(format!("{}/agents/run", srv.app_url))
         .json(&json!({"prompt": "Find me a COBOL developer on the Moon"}))
         .send()
         .await
@@ -185,13 +189,13 @@ async fn agent_run_with_no_matching_talents_retries_and_returns_empty() {
     );
 }
 
-#[tokio::test(flavor = "current_thread")]
+#[tokio::test]
 async fn health_returns_ok() {
-    let ctx = setup().await;
+    let srv = shared_server().await;
+    let client = reqwest::Client::new();
 
-    let res = ctx
-        .client
-        .get(format!("{}/health", ctx.app_url))
+    let res = client
+        .get(format!("{}/health", srv.app_url))
         .send()
         .await
         .unwrap();

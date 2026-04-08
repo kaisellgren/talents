@@ -20,8 +20,18 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
         .unwrap_or("");
 
     let response_content = if system_content.contains("triage") {
-        r#"{"required_skills":["rust"],"preferred_skills":[],"location_city":null,"location_country":null,"max_hourly_rate":null}"#
-            .to_string()
+        // Return a skill that matches the user's prompt so constraint tests work correctly.
+        // For prompts asking for impossible skills (COBOL on the Moon), return a skill
+        // that won't match any seeded talent so the retry loop exhausts its iterations.
+        let skill = if user_content.to_lowercase().contains("cobol") {
+            "cobol_moon_nomatch_xyz"
+        } else {
+            "rust"
+        };
+        format!(
+            r#"{{"required_skills":["{}"],"preferred_skills":[],"location_city":null,"location_country":null,"max_hourly_rate":null}}"#,
+            skill
+        )
     } else if system_content.contains("ranking") {
         let count = parse_talent_count_from_user_content(user_content);
         if count == 0 {
