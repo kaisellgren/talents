@@ -3,6 +3,10 @@ name = "talents"
 version = "0.1.0"
 edition = "2024"
 
+[[bin]]
+name = "seed"
+path = "src/bin/seed.rs"
+
 [dependencies]
 axum = { version = "0.6", features = ["macros", "ws"] }
 sqlx = { version = "0.7", features = ["postgres", "runtime-tokio-native-tls", "uuid", "chrono"] }
