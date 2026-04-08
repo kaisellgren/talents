@@ -25,7 +25,7 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
     } else if system_content.contains("ranking") {
         let talents = parse_talents_from_user_content(user_content);
         if talents.is_empty() {
-            eprintln!("mock_sglang: ranking called but no talents parsed from user content");
+            eprintln!("mock_llm: ranking called but no talents parsed from user content");
             return Err(StatusCode::UNPROCESSABLE_ENTITY);
         }
         let rankings: Vec<Value> = talents
@@ -36,7 +36,7 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
     } else if system_content.contains("summarizer") {
         let talents = parse_talents_from_user_content(user_content);
         if talents.is_empty() {
-            eprintln!("mock_sglang: summarizer called but no talents parsed from user content");
+            eprintln!("mock_llm: summarizer called but no talents parsed from user content");
             return Err(StatusCode::UNPROCESSABLE_ENTITY);
         }
         let summaries: Vec<Value> = talents

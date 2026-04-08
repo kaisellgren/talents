@@ -1,7 +1,7 @@
 pub mod agents;
 pub mod db;
 pub mod routes;
-pub mod sglang;
+pub mod llm;
 
 use axum::{routing::{get, post}, Extension, Router};
 use sqlx::PgPool;

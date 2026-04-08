@@ -4,7 +4,7 @@ use std::net::SocketAddr;
 mod agents;
 mod db;
 mod routes;
-mod sglang;
+mod llm;
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {

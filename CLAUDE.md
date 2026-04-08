@@ -10,7 +10,6 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Docker Compose
 The repository ships with a `docker-compose.yml` defining two services:
 1. **postgres** – PostgreSQL 16, exposed on port 5432.
-2. **sglang** – LLM server from lmsysorg/sglang, exposing the model API on port 9000.
 
 To start both containers: `podman compose up -d`. To stop them: `podman compose down`.
 
@@ -25,13 +24,13 @@ cargo sqlx migrate run --database-url "postgres://user:password@localhost:5432/t
 - `Cargo.toml`: Rust package metadata; currently no external dependencies.
 - `src/main.rs`: Application entry point – placeholder for future logic.
 - `src/db/migrations/`: Folder containing raw SQL migration files.
-- `docker-compose.yml`: Service definitions for PostgreSQL and SGLang.
+- `docker-compose.yml`: Service definitions for PostgreSQL.
 
 ## Development Notes
 - The repository is intentionally minimal; additional crates (e.g., `sqlx`, `serde`) will be added as the application grows.
 - When adding new modules, follow Rust's module system conventions: create a file in `src/` or sub‑folder and expose public items via `pub mod`.
 - Tests should live under `tests/` or use integration tests in `src/tests`. Use `cargo test` to run them.
-- Keep the Docker Compose configuration up‑to‑date with service versions. The SGLang container mounts your Hugging Face cache for faster model loading.
+- Keep the Docker Compose configuration up‑to‑date with service versions.
 
 ---
 **End of CLAUDE.md**

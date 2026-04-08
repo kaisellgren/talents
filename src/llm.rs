@@ -46,7 +46,7 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
     let response_body: Value = response
         .json()
         .await
-        .context("Failed to parse SGLang response")?;
+        .context("Failed to parse LLM response")?;
     let content = response_body["choices"][0]["message"]["content"]
         .as_str()
         .context("Missing content in LLM response")?

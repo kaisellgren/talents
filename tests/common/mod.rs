@@ -1,4 +1,4 @@
-pub mod mock_sglang;
+pub mod mock_llm;
 pub mod seed;
 
 use sqlx::PgPool;
@@ -38,7 +38,7 @@ pub async fn setup() -> TestContext {
     tokio::spawn(async move {
         axum::Server::from_tcp(mock_listener)
             .unwrap()
-            .serve(mock_sglang::router().into_make_service())
+            .serve(mock_llm::router().into_make_service())
             .await
             .unwrap();
     });

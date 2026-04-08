@@ -26,7 +26,7 @@ pub async fn run(talents: &[Talent], prompt: &str) -> Result<Vec<RankedTalent>> 
     let talents_json = serde_json::to_string(talents)?;
     let user_content = format!("Prompt: {}\n\nTalents: {}", prompt, talents_json);
 
-    let content = crate::sglang::chat_completion(system_prompt, &user_content).await?;
+    let content = crate::llm::chat_completion(system_prompt, &user_content).await?;
 
     #[derive(Deserialize)]
     struct RankingResponse {

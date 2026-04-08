@@ -34,7 +34,7 @@ pub async fn run(
         max_hourly_rate (number or null).".to_string()
     };
 
-    let content = crate::sglang::chat_completion(&system_prompt, prompt).await?;
+    let content = crate::llm::chat_completion(&system_prompt, prompt).await?;
     let output: TriageOutput = serde_json::from_str(&content)
         .map_err(|e| anyhow::anyhow!("Triage agent returned invalid JSON: {}: {}", e, content))?;
     Ok(output)
