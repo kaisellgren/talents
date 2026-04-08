@@ -106,6 +106,15 @@ export const navIcon = style({
   flexShrink: 0,
 });
 
+/* ── Logo ── */
+
+export const logoMark = style({
+  width: '52px',
+  height: '52px',
+  marginBottom: '28px',
+  filter: 'drop-shadow(0 0 18px rgba(163, 166, 255, 0.45)) drop-shadow(0 0 6px rgba(163, 166, 255, 0.25))',
+});
+
 /* ── Hero ── */
 
 export const heroSection = style({

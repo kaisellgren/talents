@@ -63,6 +63,26 @@ function SearchPage() {
   return (
     <>
       <section id="search" className={s.heroSection}>
+        <svg className={s.logoMark} viewBox="0 0 36 36" fill="none" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="lt" x1="18" y1="3" x2="18" y2="18" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#e8ecff"/>
+              <stop offset="1" stopColor="#a3a6ff"/>
+            </linearGradient>
+            <linearGradient id="ll" x1="3" y1="13" x2="18" y2="33" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#9396f5"/>
+              <stop offset="1" stopColor="#4e51c4"/>
+            </linearGradient>
+            <linearGradient id="lr" x1="33" y1="13" x2="18" y2="33" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#7b7ee8"/>
+              <stop offset="1" stopColor="#3d40b0"/>
+            </linearGradient>
+          </defs>
+          <polygon points="18,3 31,13 18,19 5,13" fill="url(#lt)"/>
+          <polygon points="5,13 18,19 18,33 3,22" fill="url(#ll)"/>
+          <polygon points="31,13 18,19 18,33 33,22" fill="url(#lr)"/>
+          <polygon points="18,3 31,13 18,19 5,13" fill="none" stroke="rgba(255,255,255,0.18)" strokeWidth="0.6"/>
+        </svg>
         <p className={s.heroEyebrow}>Elite Talent Discovery</p>
         <h1 className={s.heroTitle}>Talents</h1>
         <p className={s.heroSubtitle}>
