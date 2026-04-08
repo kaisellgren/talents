@@ -1,4 +1,5 @@
 import type { AgentTalent, Talent } from '../types';
+import { getSkillIcon } from '../skillIcons';
 import * as s from './TalentCard.css';
 
 interface TalentCardProps {
@@ -48,9 +49,28 @@ export function TalentCard({ talent, agent }: TalentCardProps) {
       {/* Skills */}
       {talent.skills.length > 0 && (
         <div className={s.skillList}>
-          {talent.skills.map((sk) => (
-            <span key={sk} className={s.skill}>{sk}</span>
-          ))}
+          {talent.skills.map((sk) => {
+            const iconEntry = getSkillIcon(sk);
+            return (
+              <span key={sk} className={s.skill}>
+                {iconEntry?.type === 'simple' && (
+                  <svg
+                    className={s.skillIcon}
+                    role="img"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                    fill="currentColor"
+                  >
+                    <path d={iconEntry.icon.path} />
+                  </svg>
+                )}
+                {iconEntry?.type === 'lucide' && (
+                  <iconEntry.icon className={s.skillIcon} aria-hidden="true" />
+                )}
+                {sk}
+              </span>
+            );
+          })}
         </div>
       )}
 

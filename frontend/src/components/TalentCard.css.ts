@@ -52,7 +52,7 @@ export const nameBlock = style({
 
 export const name = style({
   fontFamily: "'Manrope', sans-serif",
-  fontSize: '1.05rem',
+  fontSize: '1.15rem',
   fontWeight: 700,
   color: '#dee5ff',
   margin: 0,
@@ -61,7 +61,7 @@ export const name = style({
 });
 
 export const role = style({
-  fontSize: '0.8rem',
+  fontSize: '0.9rem',
   color: '#a3aac4',
   margin: '3px 0 0',
   fontFamily: "'Inter', sans-serif",
@@ -90,7 +90,7 @@ export const scoreChipAgent = style({
   color: '#ffa5d9',
   borderRadius: '6px',
   padding: '4px 10px',
-  fontSize: '0.78rem',
+  fontSize: '0.88rem',
   fontWeight: 700,
   fontFamily: "'Manrope', sans-serif",
   whiteSpace: 'nowrap',
@@ -116,7 +116,7 @@ export const rateChip = style({
   color: '#7dd4a8',
   borderRadius: '6px',
   padding: '4px 10px',
-  fontSize: '0.76rem',
+  fontSize: '0.86rem',
   fontWeight: 600,
   whiteSpace: 'nowrap',
 });
@@ -128,7 +128,7 @@ export const divider = style({
 });
 
 export const bio = style({
-  fontSize: '0.84rem',
+  fontSize: '0.94rem',
   color: '#a3aac4',
   margin: 0,
   lineHeight: 1.65,
@@ -175,8 +175,8 @@ export const aiIconWrap = style({
   justifyContent: 'center',
   background: 'rgba(163,166,255,0.20)',
   borderRadius: '50%',
-  width: '22px',
-  height: '22px',
+  width: '24px',
+  height: '24px',
   flexShrink: 0,
 });
 
@@ -186,7 +186,7 @@ export const aiIcon = style({
 });
 
 export const aiMatchLabel = style({
-  fontSize: '9px',
+  fontSize: '14px',
   fontWeight: 900,
   letterSpacing: '0.1em',
   textTransform: 'uppercase',
@@ -195,7 +195,7 @@ export const aiMatchLabel = style({
 });
 
 export const summary = style({
-  fontSize: '0.75rem',
+  fontSize: '0.95rem',
   color: '#dee5ff',
   margin: 0,
   lineHeight: 1.65,
@@ -207,7 +207,7 @@ export const summary = style({
 });
 
 export const reasoning = style({
-  fontSize: '0.72rem',
+  fontSize: '0.8rem',
   color: '#8892aa',
   margin: 0,
   lineHeight: 1.55,
@@ -224,14 +224,24 @@ export const skillList = style({
 });
 
 export const skill = style({
+  display: 'inline-flex',
+  alignItems: 'center',
+  gap: '5px',
   background: 'rgba(25, 37, 64, 0.8)',
-  color: '#6d778c',
+  color: '#a3aac4',
   borderRadius: '5px',
   padding: '3px 9px',
-  fontSize: '0.73rem',
+  fontSize: '0.83rem',
   fontFamily: "'Inter', sans-serif",
   letterSpacing: '0.01em',
   border: '1px solid rgba(163, 166, 255, 0.07)',
+});
+
+export const skillIcon = style({
+  width: '11px',
+  height: '11px',
+  flexShrink: 0,
+  opacity: 0.7,
 });
 
 export const flex1 = style({
