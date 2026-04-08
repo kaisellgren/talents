@@ -23,25 +23,23 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
         r#"{"required_skills":["rust"],"preferred_skills":[],"location_city":null,"location_country":null,"max_hourly_rate":null}"#
             .to_string()
     } else if system_content.contains("ranking") {
-        let talents = parse_talents_from_user_content(user_content);
-        if talents.is_empty() {
+        let count = parse_talent_count_from_user_content(user_content);
+        if count == 0 {
             eprintln!("mock_llm: ranking called but no talents parsed from user content");
             return Err(StatusCode::UNPROCESSABLE_ENTITY);
         }
-        let rankings: Vec<Value> = talents
-            .iter()
-            .map(|id| json!({"talent_id": id, "score": 0.9, "reasoning": "Strong match"}))
+        let rankings: Vec<Value> = (0..count)
+            .map(|i| json!({"talent_index": i, "score": 0.9, "reasoning": "Strong match"}))
             .collect();
         serde_json::to_string(&json!({"rankings": rankings})).unwrap()
     } else if system_content.contains("summarizer") {
-        let talents = parse_talents_from_user_content(user_content);
-        if talents.is_empty() {
+        let count = parse_talent_count_from_user_content(user_content);
+        if count == 0 {
             eprintln!("mock_llm: summarizer called but no talents parsed from user content");
             return Err(StatusCode::UNPROCESSABLE_ENTITY);
         }
-        let summaries: Vec<Value> = talents
-            .iter()
-            .map(|id| json!({"talent_id": id, "summary": "Great talent."}))
+        let summaries: Vec<Value> = (0..count)
+            .map(|i| json!({"talent_index": i, "summary": "Great talent."}))
             .collect();
         serde_json::to_string(&json!({"summaries": summaries})).unwrap()
     } else {
@@ -53,13 +51,10 @@ async fn handle_completion(Json(body): Json<Value>) -> Result<Json<Value>, Statu
     })))
 }
 
-/// Parses talent UUIDs from the user message content.
-/// The format is: "Prompt: ...\n\nTalents: [{"id": "uuid", ...}]"
-fn parse_talents_from_user_content(user_content: &str) -> Vec<String> {
+/// Returns the number of talents in the user message content.
+/// The format is: "Prompt: ...\n\nTalents: [...]"
+fn parse_talent_count_from_user_content(user_content: &str) -> usize {
     let talents_part = user_content.split("Talents: ").nth(1).unwrap_or("[]");
     let talents: Vec<Value> = serde_json::from_str(talents_part).unwrap_or_default();
-    talents
-        .iter()
-        .filter_map(|c| c["id"].as_str().map(String::from))
-        .collect()
+    talents.len()
 }
