@@ -62,8 +62,7 @@ export function AgentSearch() {
                   location_country: '',
                   role: null,
                   available: true,
-                  hourly_rate_min: null,
-                  hourly_rate_max: null,
+                  hourly_rate: ac.hourly_rate,
                   biography: null,
                   created_at: '',
                 };

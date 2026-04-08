@@ -37,8 +37,7 @@ pub struct NewTalent {
     pub location_country: String,
     pub role: Option<String>,
     pub available: bool,
-    pub hourly_rate_min: Option<i32>,
-    pub hourly_rate_max: Option<i32>,
+    pub hourly_rate: i32,
     pub biography: Option<String>,
 }
 
@@ -87,8 +86,7 @@ async fn create_talent(
         location_country: body.location_country,
         role: body.role,
         available: body.available,
-        hourly_rate_min: body.hourly_rate_min,
-        hourly_rate_max: body.hourly_rate_max,
+        hourly_rate: body.hourly_rate,
         biography: body.biography,
         created_at: chrono::Utc::now(),
     };

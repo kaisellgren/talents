@@ -20,8 +20,7 @@ pub struct AgentTalent {
     pub location_city: String,
     pub location_country: String,
     pub role: Option<String>,
-    pub hourly_rate_min: Option<i32>,
-    pub hourly_rate_max: Option<i32>,
+    pub hourly_rate: i32,
     pub biography: Option<String>,
 }
 
@@ -85,8 +84,7 @@ pub async fn run_agent_loop(pool: &PgPool, prompt: &str) -> Result<AgentResponse
                     location_city: talent.location_city.clone(),
                     location_country: talent.location_country.clone(),
                     role: talent.role.clone(),
-                    hourly_rate_min: talent.hourly_rate_min,
-                    hourly_rate_max: talent.hourly_rate_max,
+                    hourly_rate: talent.hourly_rate,
                     biography: talent.biography.clone(),
                 })
             })

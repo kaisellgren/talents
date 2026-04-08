@@ -4,7 +4,7 @@ use talents::agents::triage::TriageOutput;
 use talents::db::talent::Talent;
 use uuid::Uuid;
 
-fn make_talent(skills: Vec<String>, available: bool, hourly_rate_max: Option<i32>) -> Talent {
+fn make_talent(skills: Vec<String>, available: bool, hourly_rate: i32) -> Talent {
     Talent {
         id: Uuid::new_v4(),
         name: "Test".to_string(),
@@ -13,8 +13,7 @@ fn make_talent(skills: Vec<String>, available: bool, hourly_rate_max: Option<i32
         location_country: "Finland".to_string(),
         role: None,
         available,
-        hourly_rate_min: None,
-        hourly_rate_max,
+        hourly_rate,
         biography: None,
         created_at: Utc::now(),
     }
@@ -32,7 +31,7 @@ fn make_triage(required: Vec<&str>, max_rate: Option<i32>) -> TriageOutput {
 
 #[test]
 fn keeps_available_talent_matching_skills_and_rate() {
-    let talents = vec![make_talent(vec!["rust".into()], true, Some(100))];
+    let talents = vec![make_talent(vec!["rust".into()], true, 100)];
     let triage = make_triage(vec!["rust"], Some(100));
     let result = constraint::run(talents, &triage);
     assert_eq!(result.len(), 1);
@@ -40,7 +39,7 @@ fn keeps_available_talent_matching_skills_and_rate() {
 
 #[test]
 fn removes_unavailable_talent() {
-    let talents = vec![make_talent(vec!["rust".into()], false, Some(100))];
+    let talents = vec![make_talent(vec!["rust".into()], false, 100)];
     let triage = make_triage(vec!["rust"], None);
     let result = constraint::run(talents, &triage);
     assert!(result.is_empty());
@@ -48,7 +47,7 @@ fn removes_unavailable_talent() {
 
 #[test]
 fn removes_talent_exceeding_max_rate() {
-    let talents = vec![make_talent(vec!["rust".into()], true, Some(200))];
+    let talents = vec![make_talent(vec!["rust".into()], true, 200)];
     let triage = make_triage(vec!["rust"], Some(100));
     let result = constraint::run(talents, &triage);
     assert!(result.is_empty());
@@ -56,7 +55,7 @@ fn removes_talent_exceeding_max_rate() {
 
 #[test]
 fn removes_talent_missing_required_skill() {
-    let talents = vec![make_talent(vec!["python".into()], true, Some(80))];
+    let talents = vec![make_talent(vec!["python".into()], true, 80)];
     let triage = make_triage(vec!["rust"], None);
     let result = constraint::run(talents, &triage);
     assert!(result.is_empty());
@@ -64,17 +63,16 @@ fn removes_talent_missing_required_skill() {
 
 #[test]
 fn keeps_talent_when_no_rate_limit_specified() {
-    let talents = vec![make_talent(vec!["rust".into()], true, None)];
+    let talents = vec![make_talent(vec!["rust".into()], true, 150)];
     let triage = make_triage(vec!["rust"], None);
     let result = constraint::run(talents, &triage);
     assert_eq!(result.len(), 1);
 }
 
 #[test]
-fn keeps_talent_with_no_rate_when_max_rate_is_specified() {
-    let talents = vec![make_talent(vec!["rust".into()], true, None)];
+fn keeps_talent_within_max_rate() {
+    let talents = vec![make_talent(vec!["rust".into()], true, 100)];
     let triage = make_triage(vec!["rust"], Some(100));
     let result = constraint::run(talents, &triage);
-    // Talents with unknown rate are kept — rate cannot be proven to violate the limit.
     assert_eq!(result.len(), 1);
 }

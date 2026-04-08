@@ -13,8 +13,7 @@ pub struct Talent {
     pub location_country: String,
     pub role: Option<String>,
     pub available: bool,
-    pub hourly_rate_min: Option<i32>,
-    pub hourly_rate_max: Option<i32>,
+    pub hourly_rate: i32,
     pub biography: Option<String>,
     pub created_at: DateTime<Utc>,
 }
@@ -29,8 +28,8 @@ pub async fn create_talent(
         r#"
         INSERT INTO talents (
             name, skills, location_city, location_country,
-            role, available, hourly_rate_min, hourly_rate_max, biography
-        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9)
+            role, available, hourly_rate, biography
+        ) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
         RETURNING *
         "#,
     )
@@ -40,8 +39,7 @@ pub async fn create_talent(
     .bind(talent.location_country)
     .bind(talent.role)
     .bind(talent.available)
-    .bind(talent.hourly_rate_min)
-    .bind(talent.hourly_rate_max)
+    .bind(talent.hourly_rate)
     .bind(talent.biography)
     .fetch_one(pool)
     .await?;

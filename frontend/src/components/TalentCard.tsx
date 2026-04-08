@@ -8,12 +8,7 @@ interface TalentCardProps {
 }
 
 export function TalentCard({ talent, agent }: TalentCardProps) {
-  const rateStr =
-    talent.hourly_rate_min != null && talent.hourly_rate_max != null
-      ? `${talent.hourly_rate_min}–${talent.hourly_rate_max} €/hr`
-      : talent.hourly_rate_min != null
-        ? `from ${talent.hourly_rate_min} €/hr`
-        : null;
+  const rateStr = `${talent.hourly_rate} €/hr`;
 
   const scoreDisplay = agent ? `${(agent.score * 100).toFixed(0)}% match` : null;
   const hasLocation = talent.location_city || talent.location_country;
@@ -37,7 +32,7 @@ export function TalentCard({ talent, agent }: TalentCardProps) {
         </div>
         <div className={s.chips}>
           {scoreDisplay && <span className={agent ? s.scoreChipAgent : s.scoreChip}>{scoreDisplay}</span>}
-          {rateStr && <span className={s.rateChip}>{rateStr}</span>}
+          <span className={s.rateChip}>{rateStr}</span>
         </div>
       </div>
 

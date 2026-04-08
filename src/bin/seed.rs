@@ -60,8 +60,7 @@ struct RoleConfig {
     title: &'static str,
     skills: &'static [&'static str],
     bios: &'static [&'static str],
-    rate_min_range: (i32, i32),
-    rate_spread: (i32, i32),
+    rate_range: (i32, i32),
 }
 
 static ROLES: &[RoleConfig] = &[
@@ -75,8 +74,7 @@ static ROLES: &[RoleConfig] = &[
             "{N} years of backend experience across fintech and SaaS. I care deeply about API design, database efficiency, and keeping on-call alerts quiet.",
             "Based in {City}, I've been writing server-side code for {N} years. I thrive in environments where uptime and data integrity are non-negotiable.",
         ],
-        rate_min_range: (70, 110),
-        rate_spread: (20, 40),
+        rate_range: (70, 150),
     },
     RoleConfig {
         title: "Frontend Engineer",
@@ -88,8 +86,7 @@ static ROLES: &[RoleConfig] = &[
             "Based in {City}, I specialise in React ecosystems and design systems. {N} years of crafting interfaces that are both beautiful and maintainable.",
             "Frontend developer with {N} years of experience. I care about performance, accessibility, and shipping interfaces that actually delight users.",
         ],
-        rate_min_range: (60, 95),
-        rate_spread: (20, 35),
+        rate_range: (60, 130),
     },
     RoleConfig {
         title: "Full Stack Engineer",
@@ -101,8 +98,7 @@ static ROLES: &[RoleConfig] = &[
             "I've spent {N} years owning features top to bottom. Product-minded engineer who enjoys the full picture: database, API, and interface.",
             "Full stack background spanning {N} years. I prefer small teams, high autonomy, and systems that are simple enough to fit in one person's head.",
         ],
-        rate_min_range: (65, 100),
-        rate_spread: (20, 35),
+        rate_range: (65, 135),
     },
     RoleConfig {
         title: "Mobile Developer",
@@ -114,8 +110,7 @@ static ROLES: &[RoleConfig] = &[
             "Cross-platform mobile specialist with {N} years of experience. Flutter is my current primary stack, but I'm fluent in Swift and Kotlin too.",
             "{N} years building mobile products from prototype to production. I bridge the gap between product vision and platform constraints.",
         ],
-        rate_min_range: (65, 100),
-        rate_spread: (20, 35),
+        rate_range: (65, 135),
     },
     RoleConfig {
         title: "Data Scientist",
@@ -127,8 +122,7 @@ static ROLES: &[RoleConfig] = &[
             "Data scientist with a statistics background and {N} years of industry experience. I believe good visualisation is as important as good modelling.",
             "{N} years in data science, working across the full pipeline from raw data ingestion to stakeholder-ready dashboards.",
         ],
-        rate_min_range: (70, 105),
-        rate_spread: (20, 40),
+        rate_range: (70, 145),
     },
     RoleConfig {
         title: "ML Engineer",
@@ -140,8 +134,7 @@ static ROLES: &[RoleConfig] = &[
             "ML engineer with {N} years of experience. My work spans feature engineering, model deployment, and the boring-but-critical tooling that keeps models alive.",
             "{N} years in ML engineering, with a focus on real-time inference and retraining pipelines. I care about latency, reliability, and explainability.",
         ],
-        rate_min_range: (80, 120),
-        rate_spread: (20, 45),
+        rate_range: (80, 165),
     },
     RoleConfig {
         title: "DevOps Engineer",
@@ -153,8 +146,7 @@ static ROLES: &[RoleConfig] = &[
             "Infrastructure engineer with {N} years of experience. I believe infrastructure should be code, deployments should be boring, and alerts should be rare.",
             "{N} years in DevOps across startups and enterprise. Strong opinions on GitOps, observability, and the virtues of a well-tuned Kubernetes cluster.",
         ],
-        rate_min_range: (70, 110),
-        rate_spread: (20, 40),
+        rate_range: (70, 150),
     },
     RoleConfig {
         title: "System Architect",
@@ -166,8 +158,7 @@ static ROLES: &[RoleConfig] = &[
             "Architect with {N} years of experience across cloud-native and on-premise systems. I specialise in taming complexity through clear boundaries and explicit contracts.",
             "{N} years designing systems that scale. I've made enough mistakes to know which trade-offs matter and which are just flavour of the month.",
         ],
-        rate_min_range: (90, 130),
-        rate_spread: (25, 50),
+        rate_range: (90, 180),
     },
     RoleConfig {
         title: "Security Engineer",
@@ -179,8 +170,7 @@ static ROLES: &[RoleConfig] = &[
             "Security specialist with {N} years of experience. I believe security is a design constraint, not an afterthought, and I advocate for that at every stage of development.",
             "{N} years in cybersecurity across SaaS and financial services. My approach is pragmatic: fix what matters most, communicate risk clearly, and never stop learning.",
         ],
-        rate_min_range: (80, 120),
-        rate_spread: (20, 45),
+        rate_range: (80, 165),
     },
     RoleConfig {
         title: "QA Engineer",
@@ -192,8 +182,7 @@ static ROLES: &[RoleConfig] = &[
             "QA engineer with {N} years of experience in both manual exploratory testing and automated suites. I find the edge cases that specs forget to mention.",
             "{N} years ensuring software ships with confidence. Strong background in performance testing and setting up test infrastructure from scratch.",
         ],
-        rate_min_range: (55, 85),
-        rate_spread: (15, 30),
+        rate_range: (55, 115),
     },
     RoleConfig {
         title: "UX Designer",
@@ -205,8 +194,7 @@ static ROLES: &[RoleConfig] = &[
             "UX designer with {N} years of experience. I specialise in complex workflows — the kind where getting it wrong has real consequences for real people.",
             "{N} years working at the intersection of user research and interaction design. I bring structure to ambiguity and clarity to complex problems.",
         ],
-        rate_min_range: (60, 90),
-        rate_spread: (20, 35),
+        rate_range: (60, 125),
     },
     RoleConfig {
         title: "Graphic Designer",
@@ -218,8 +206,7 @@ static ROLES: &[RoleConfig] = &[
             "Visual designer with {N} years of experience. Strong typographic sensibility and a passion for brand systems that scale.",
             "{N} years in graphic design. I've art-directed campaigns, designed packaging, and built visual identities used across print and digital.",
         ],
-        rate_min_range: (45, 80),
-        rate_spread: (15, 30),
+        rate_range: (45, 110),
     },
     RoleConfig {
         title: "UI Designer",
@@ -231,8 +218,7 @@ static ROLES: &[RoleConfig] = &[
             "UI designer with {N} years of experience. My work focuses on interaction patterns, visual hierarchy, and bridging the gap between design and code.",
             "{N} years creating UI across SaaS dashboards, e-commerce, and consumer apps. I have a systematic approach to design and strong attention to detail.",
         ],
-        rate_min_range: (55, 85),
-        rate_spread: (15, 30),
+        rate_range: (55, 115),
     },
     RoleConfig {
         title: "Product Manager",
@@ -244,8 +230,7 @@ static ROLES: &[RoleConfig] = &[
             "PM with {N} years of experience. I specialise in 0-to-1 product development and bringing order to roadmaps that have grown without a strategy.",
             "{N} years in product. Strong believer in talking to customers, running structured experiments, and shipping small things often.",
         ],
-        rate_min_range: (70, 105),
-        rate_spread: (20, 40),
+        rate_range: (70, 145),
     },
     RoleConfig {
         title: "Product Owner",
@@ -257,8 +242,7 @@ static ROLES: &[RoleConfig] = &[
             "Product owner with {N} years of experience in financial services and e-commerce. I balance competing priorities without losing sight of the user.",
             "{N} years working with Scrum teams as a product owner. Strong skills in stakeholder alignment and turning vague requirements into actionable stories.",
         ],
-        rate_min_range: (60, 90),
-        rate_spread: (20, 35),
+        rate_range: (60, 125),
     },
     RoleConfig {
         title: "Project Manager",
@@ -270,8 +254,7 @@ static ROLES: &[RoleConfig] = &[
             "PM with {N} years of experience in IT and digital transformation. I'm direct about risks, disciplined about scope, and relentless about delivery.",
             "{N} years in project management. I've rescued projects in trouble and set up new ones for success. Strong communicator at every level of an organisation.",
         ],
-        rate_min_range: (60, 90),
-        rate_spread: (15, 30),
+        rate_range: (60, 120),
     },
     RoleConfig {
         title: "SEO Specialist",
@@ -283,8 +266,7 @@ static ROLES: &[RoleConfig] = &[
             "SEO consultant with {N} years of experience. I've led site migrations, built content strategies, and fixed technical issues that were quietly killing rankings.",
             "{N} years in digital marketing with a focus on organic search. I care about sustainable traffic growth built on genuine value, not tricks.",
         ],
-        rate_min_range: (50, 80),
-        rate_spread: (15, 30),
+        rate_range: (50, 110),
     },
     RoleConfig {
         title: "System Designer",
@@ -296,8 +278,7 @@ static ROLES: &[RoleConfig] = &[
             "Technical designer with {N} years of experience. I specialise in the messy middle ground between high-level architecture and implementation detail.",
             "{N} years in system and solution design. I've shaped platforms from greenfield to production, always with an eye on long-term operability.",
         ],
-        rate_min_range: (80, 115),
-        rate_spread: (20, 40),
+        rate_range: (80, 155),
     },
 ];
 
@@ -424,9 +405,7 @@ async fn main() -> Result<(), anyhow::Error> {
             .replace("{N}", &years.to_string())
             .replace("{City}", city);
 
-        let rate_min = rng.i32_in(role.rate_min_range.0, role.rate_min_range.1);
-        let rate_spread = rng.i32_in(role.rate_spread.0, role.rate_spread.1);
-        let rate_max = rate_min + rate_spread;
+        let rate = rng.i32_in(role.rate_range.0, role.rate_range.1);
 
         let available = rng.bool_chance(65);
 
@@ -438,8 +417,7 @@ async fn main() -> Result<(), anyhow::Error> {
             location_country: country.to_string(),
             role: Some(role.title.to_string()),
             available,
-            hourly_rate_min: Some(rate_min),
-            hourly_rate_max: Some(rate_max),
+            hourly_rate: rate,
             biography: Some(biography),
             created_at: Utc::now(),
         };

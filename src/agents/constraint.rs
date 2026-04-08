@@ -12,12 +12,9 @@ pub fn run(talents: Vec<Talent>, triage: &TriageOutput) -> Vec<Talent> {
                 return false;
             }
             if let Some(max_rate) = triage.max_hourly_rate
-                && let Some(talent_max) = c.hourly_rate_max
-                && talent_max > max_rate
+                && c.hourly_rate > max_rate
             {
                 return false;
-                // Talents with no hourly_rate_max set are allowed through —
-                // rate is unknown, so we do not assume a violation.
             }
             let skills_lower: Vec<String> =
                 c.skills.iter().map(|s| s.to_ascii_lowercase()).collect();

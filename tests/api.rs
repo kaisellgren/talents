@@ -21,8 +21,7 @@ async fn create_talent_returns_201_with_id() {
             "location_city": "Helsinki",
             "location_country": "Finland",
             "available": true,
-            "hourly_rate_min": 80,
-            "hourly_rate_max": 120,
+            "hourly_rate": 100,
             "biography": "Senior Rust engineer."
         }))
         .send()
@@ -134,7 +133,7 @@ async fn agent_run_returns_ranked_talents() {
         TalentOverrides {
             skills: Some(vec!["rust".into()]),
             available: Some(true),
-            hourly_rate_max: Some(100),
+            hourly_rate: Some(100),
             ..Default::default()
         },
     )

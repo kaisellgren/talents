@@ -6,8 +6,7 @@ export interface Talent {
   location_country: string;
   role: string | null;
   available: boolean;
-  hourly_rate_min: number | null;
-  hourly_rate_max: number | null;
+  hourly_rate: number;
   biography: string | null;
   created_at: string;
 }
@@ -22,8 +21,7 @@ export interface AgentTalent {
   location_city: string;
   location_country: string;
   role: string | null;
-  hourly_rate_min: number | null;
-  hourly_rate_max: number | null;
+  hourly_rate: number;
   biography: string | null;
 }
 
