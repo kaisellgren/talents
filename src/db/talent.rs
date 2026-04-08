@@ -72,7 +72,7 @@ pub async fn search_by_skills_and_location(
 
     let skills_lower: Vec<String> = required_skills
         .iter()
-        .map(|s| s.to_ascii_lowercase())
+        .map(|s| normalize_skill(s.to_ascii_lowercase()))
         .collect();
     let skills_json =
         serde_json::to_value(&skills_lower).map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
@@ -80,15 +80,15 @@ pub async fn search_by_skills_and_location(
     // Build query with optional location conditions using $2/$3 parameters
     let query_str = match (city, country) {
         (Some(_), Some(_)) => {
-            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_city = $2 AND location_country = $3"
+            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_city = $2 AND location_country = $3 LIMIT 20"
         }
         (Some(_), None) => {
-            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_city = $2"
+            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_city = $2 LIMIT 20"
         }
         (None, Some(_)) => {
-            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_country = $2"
+            "SELECT * FROM talents WHERE skills @> $1::jsonb AND location_country = $2 LIMIT 20"
         }
-        (None, None) => "SELECT * FROM talents WHERE skills @> $1::jsonb",
+        (None, None) => "SELECT * FROM talents WHERE skills @> $1::jsonb LIMIT 20",
     };
 
     let mut q = query_as::<_, Talent>(query_str).bind(skills_json);
@@ -100,4 +100,20 @@ pub async fn search_by_skills_and_location(
     }
 
     q.fetch_all(pool).await
+}
+
+fn normalize_skill(skill: String) -> String {
+    if skill.ends_with("designer") {
+        return skill.replace("designer", "design").into();
+    }
+    if skill == "backend engineering" {
+        return "backend".into();
+    }
+    if skill == "frontend engineering" {
+        return "frontend".into();
+    }
+    if skill == "product owner" {
+        return "product management".into();
+    }
+    skill
 }
