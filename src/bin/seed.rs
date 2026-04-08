@@ -58,6 +58,7 @@ impl Rng {
 
 struct RoleConfig {
     title: &'static str,
+    guaranteed_skills: &'static [&'static str],
     skills: &'static [&'static str],
     bios: &'static [&'static str],
     rate_range: (i32, i32),
@@ -66,6 +67,7 @@ struct RoleConfig {
 static ROLES: &[RoleConfig] = &[
     RoleConfig {
         title: "Backend Engineer",
+        guaranteed_skills: &["Backend"],
         skills: &["Rust", "Node.js", "TypeScript", "JavaScript", "Scala", "Go", "Python", "Java", "Kotlin", "PostgreSQL", "Redis", "Docker", "Kubernetes", "gRPC", "REST APIs", "GraphQL", "Kafka", "RabbitMQ", "Terraform"],
         bios: &[
             "Backend engineer with {N} years building high-throughput distributed systems. I focus on reliability, clean APIs, and making infrastructure boring in the best possible way.",
@@ -78,6 +80,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Frontend Engineer",
+        guaranteed_skills: &["Frontend"],
         skills: &["TypeScript", "JavaScript", "React", "Vue.js", "Next.js", "Svelte", "CSS", "HTML", "Tailwind CSS", "Figma", "Webpack", "Vite", "Jest", "Storybook", "Accessibility"],
         bios: &[
             "Frontend engineer with {N} years turning designs into fast, accessible web interfaces. I obsess over user experience, performance budgets, and clean component APIs.",
@@ -90,6 +93,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Full Stack Engineer",
+        guaranteed_skills: &["Backend", "Frontend"],
         skills: &["TypeScript", "React", "Node.js", "PostgreSQL", "Docker", "REST APIs", "Next.js", "GraphQL", "Git", "Redis", "Python", "CSS", "HTML"],
         bios: &[
             "Full stack engineer with {N} years building end-to-end web products. I'm equally comfortable in a React component tree and a PostgreSQL query plan.",
@@ -102,6 +106,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Mobile Developer",
+        guaranteed_skills: &["Mobile Development"],
         skills: &["Swift", "Kotlin", "React Native", "Flutter", "iOS", "Android", "Firebase", "REST APIs", "Git", "Accessibility", "App Store Connect", "Jetpack Compose"],
         bios: &[
             "Mobile developer with {N} years building native and cross-platform apps. I care about smooth animations, snappy performance, and app store reviews that start with five stars.",
@@ -114,7 +119,8 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Data Scientist",
-        skills: &["Python", "R", "TensorFlow", "PyTorch", "Pandas", "NumPy", "Scikit-learn", "SQL", "Jupyter", "Data Visualization", "Machine Learning", "Statistics", "Spark", "Tableau"],
+        guaranteed_skills: &["Data Science", "Machine Learning"],
+        skills: &["Python", "R", "TensorFlow", "PyTorch", "Pandas", "NumPy", "Scikit-learn", "SQL", "Jupyter", "Data Visualization", "Statistics", "Spark", "Tableau"],
         bios: &[
             "Data scientist with {N} years extracting insight from messy, real-world datasets. I bridge statistical rigour and practical business impact.",
             "{N} years of experience in predictive modelling and exploratory analysis. I turn ambiguous business questions into clear, measurable answers.",
@@ -126,6 +132,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "ML Engineer",
+        guaranteed_skills: &["Data Science", "Machine Learning"],
         skills: &["Python", "TensorFlow", "PyTorch", "MLflow", "Kubernetes", "Docker", "Spark", "Kafka", "Scala", "SQL", "Airflow", "Feature Stores", "Model Serving"],
         bios: &[
             "ML engineer with {N} years building and shipping machine learning systems. I focus on the gap between research prototypes and production models.",
@@ -138,6 +145,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "DevOps Engineer",
+        guaranteed_skills: &["DevOps"],
         skills: &["Kubernetes", "Docker", "Terraform", "Ansible", "Jenkins", "GitHub Actions", "Linux", "AWS", "GCP", "Azure", "Prometheus", "Grafana", "Nginx", "Bash", "CI/CD"],
         bios: &[
             "DevOps engineer with {N} years building the infrastructure that keeps software running. I automate everything I touch and monitor everything I automate.",
@@ -150,6 +158,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "System Architect",
+        guaranteed_skills: &["System Architecture"],
         skills: &["Distributed Systems", "Microservices", "Event-Driven Architecture", "Kafka", "gRPC", "PostgreSQL", "Redis", "Kubernetes", "Cloud Architecture", "System Design", "API Design", "Domain-Driven Design"],
         bios: &[
             "System architect with {N} years designing large-scale distributed systems. I help engineering teams move fast without accumulating architectural debt.",
@@ -162,6 +171,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Security Engineer",
+        guaranteed_skills: &["Security"],
         skills: &["Penetration Testing", "OWASP", "Cryptography", "Network Security", "Linux", "Python", "Security Audits", "SIEM", "Zero Trust", "Identity Management", "Threat Modelling", "Bash"],
         bios: &[
             "Security engineer with {N} years finding problems before attackers do. I work across red and blue team disciplines, with a focus on practical, risk-based security.",
@@ -174,6 +184,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "QA Engineer",
+        guaranteed_skills: &["QA", "Testing"],
         skills: &["Selenium", "Cypress", "Playwright", "Jest", "Pytest", "Test Automation", "Performance Testing", "API Testing", "CI/CD", "SQL", "Postman", "Load Testing", "BDD"],
         bios: &[
             "QA engineer with {N} years building test automation frameworks and catching the bugs that matter. I believe quality is a team responsibility, not a gatekeeper function.",
@@ -186,6 +197,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "UX Designer",
+        guaranteed_skills: &["UX Design"],
         skills: &["Figma", "User Research", "Wireframing", "Prototyping", "Usability Testing", "Design Systems", "Accessibility", "Information Architecture", "Sketch", "Journey Mapping", "Card Sorting"],
         bios: &[
             "UX designer with {N} years championing the user in product decisions. I run research, build prototypes, and push back on assumptions with data.",
@@ -198,6 +210,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Graphic Designer",
+        guaranteed_skills: &["Graphic Design"],
         skills: &["Figma", "Adobe Illustrator", "Adobe Photoshop", "InDesign", "Branding", "Typography", "Motion Design", "Sketch", "Visual Design", "Brand Identity", "Print Design"],
         bios: &[
             "Graphic designer with {N} years creating visual identities, marketing materials, and digital assets. I believe good design communicates before a word is read.",
@@ -210,7 +223,8 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "UI Designer",
-        skills: &["Figma", "CSS", "HTML", "Design Systems", "Prototyping", "Sketch", "Adobe XD", "Accessibility", "Motion Design", "Tailwind CSS", "Component Libraries", "Dark Mode"],
+        guaranteed_skills: &["UI Design"],
+        skills: &["Figma", "CSS", "HTML", "Design Systems", "Prototyping", "Sketch", "Adobe XD", "Accessibility", "Motion Design", "Tailwind CSS", "Component Libraries"],
         bios: &[
             "UI designer with {N} years crafting interfaces that are both visually precise and technically implementable. I speak fluent designer and fluent developer.",
             "{N} years designing UI for web and mobile. I care about consistency, accessibility, and the small details that make an interface feel considered.",
@@ -222,6 +236,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Product Manager",
+        guaranteed_skills: &["Product Management"],
         skills: &["Agile", "Scrum", "Roadmapping", "User Research", "Jira", "Confluence", "A/B Testing", "Data Analysis", "Stakeholder Management", "OKRs", "Competitive Analysis", "Product Strategy"],
         bios: &[
             "Product manager with {N} years turning user problems into shipped product. I write crisp specs, run effective discovery, and keep engineering teams unblocked.",
@@ -234,6 +249,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Product Owner",
+        guaranteed_skills: &["Product Management"],
         skills: &["Scrum", "Agile", "Backlog Management", "User Stories", "Jira", "Stakeholder Management", "Product Strategy", "Sprint Planning", "Acceptance Criteria", "Confluence"],
         bios: &[
             "Product owner with {N} years keeping backlogs healthy and development teams focused. I translate business goals into user stories that developers can act on immediately.",
@@ -246,6 +262,7 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "Project Manager",
+        guaranteed_skills: &["Project Management"],
         skills: &["Agile", "Scrum", "PMP", "Risk Management", "Budgeting", "MS Project", "Jira", "Confluence", "Stakeholder Management", "Waterfall", "Resource Planning", "Change Management"],
         bios: &[
             "Project manager with {N} years delivering complex projects on time and within budget. I'm the person who keeps chaos organised and stakeholders informed.",
@@ -258,7 +275,8 @@ static ROLES: &[RoleConfig] = &[
     },
     RoleConfig {
         title: "SEO Specialist",
-        skills: &["SEO", "Google Analytics", "Ahrefs", "Semrush", "Content Strategy", "Technical SEO", "Link Building", "HTML", "WordPress", "Data Analysis", "Google Search Console", "Core Web Vitals"],
+        guaranteed_skills: &["SEO"],
+        skills: &["Google Analytics", "Ahrefs", "Semrush", "Content Strategy", "Technical SEO", "Link Building", "HTML", "WordPress", "Data Analysis", "Google Search Console", "Core Web Vitals"],
         bios: &[
             "SEO specialist with {N} years growing organic traffic for e-commerce, media, and SaaS companies. I work equally on technical foundations and content strategy.",
             "{N} years in SEO across in-house and agency roles. I combine data analysis with an understanding of how search engines actually work.",
@@ -269,8 +287,22 @@ static ROLES: &[RoleConfig] = &[
         rate_range: (50, 110),
     },
     RoleConfig {
+        title: "Product Designer",
+        guaranteed_skills: &["Product Design"],
+        skills: &["Figma", "User Research", "Prototyping", "Design Systems", "Usability Testing", "Wireframing", "Accessibility", "Interaction Design", "Visual Design", "Sketch", "Adobe XD", "Journey Mapping", "Component Libraries"],
+        bios: &[
+            "Product designer with {N} years shaping digital products from early concept to shipped feature. I connect user needs, business goals, and technical constraints into coherent, usable experiences.",
+            "{N} years designing products end-to-end — research, wireframes, high-fidelity UI, and handoff. I care about outcomes more than outputs.",
+            "Based in {City}, I've spent {N} years working embedded in product teams. I run discovery, iterate fast, and push for design that earns its place in the roadmap.",
+            "Product designer with {N} years of experience across SaaS and consumer apps. I bring systems thinking to every screen and empathy to every user flow.",
+            "{N} years in product design. I thrive at the messy intersection of product strategy and craft — turning ambiguity into interfaces people actually understand.",
+        ],
+        rate_range: (60, 130),
+    },
+    RoleConfig {
         title: "System Designer",
-        skills: &["System Design", "Distributed Systems", "Cloud Architecture", "Microservices", "UML", "Architecture Patterns", "PostgreSQL", "Kafka", "Documentation", "API Design", "Domain-Driven Design", "Event Sourcing"],
+        guaranteed_skills: &["System Design"],
+        skills: &["Distributed Systems", "Cloud Architecture", "Microservices", "UML", "Architecture Patterns", "PostgreSQL", "Kafka", "Documentation", "API Design", "Domain-Driven Design", "Event Sourcing"],
         bios: &[
             "System designer with {N} years creating technical blueprints for complex software systems. I translate business requirements into architectures that are feasible, scalable, and maintainable.",
             "{N} years designing systems at the intersection of product and engineering. I produce documentation that teams actually refer back to.",
@@ -346,21 +378,30 @@ static FIRST_NAMES: &[&str] = &[
 
 static LAST_NAMES: &[&str] = &[
     // Finnish
-    "Virtanen", "Mäkinen", "Nieminen", "Mäkinen", "Hämäläinen", "Leinonen", "Korhonen",
+    "Virtanen", "Mäkinen", "Nieminen", "Hämäläinen", "Leinonen", "Korhonen", "Laitinen",
+    "Heikkinen", "Järvinen", "Koskinen", "Lehtonen", "Turunen", "Saarinen", "Salonen",
     // Scandinavian
     "Eriksson", "Lindqvist", "Johansson", "Andersen", "Nielsen", "Hansen", "Berg", "Holm",
+    "Larsson", "Nilsson", "Persson", "Karlsson", "Petersson", "Magnusson", "Olsson",
+    "Christensen", "Pedersen", "Jensen", "Sørensen", "Mortensen",
     // German
     "Müller", "Schmidt", "Weber", "Fischer", "Meyer", "Wagner", "Hoffmann", "Becker",
+    "Schulz", "Koch", "Richter", "Klein", "Wolf", "Schröder", "Neumann", "Braun",
     // British
     "Smith", "Jones", "Williams", "Taylor", "Brown", "Davies", "Evans", "Wilson",
+    "Johnson", "Thomas", "Roberts", "Walker", "Wright", "Robinson", "Thompson", "White",
     // French
     "Martin", "Bernard", "Dubois", "Laurent", "Lefebvre", "Moreau",
+    "Simon", "Michel", "Leroy", "Roux", "David", "Bertrand", "Morel", "Fournier",
     // Spanish
     "García", "Rodríguez", "López", "Fernández", "Martínez", "Sánchez",
+    "Pérez", "Gómez", "Díaz", "Hernández", "Álvarez", "Jiménez",
     // Italian
     "Rossi", "Russo", "Ferrari", "Esposito", "Bianchi", "Romano",
+    "Colombo", "Ricci", "Marino", "Greco", "Bruno", "Gallo",
     // Eastern European
     "Kowalski", "Novák", "Ionescu", "Popescu", "Kovács", "Nagy",
+    "Wiśniewski", "Wójcik", "Kowalczyk", "Kaminski", "Horvát", "Szabó",
 ];
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -376,10 +417,11 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut rng = Rng::new();
     let mut name_set: HashSet<String> = HashSet::new();
     let mut inserted = 0usize;
+    let total = 5000;
 
     println!("Seeding 1000 talents…");
 
-    while inserted < 1000 {
+    while inserted < total {
         let role = rng.pick(ROLES);
         let (city, country) = *rng.pick(LOCATIONS);
         let first = rng.pick(FIRST_NAMES);
@@ -393,11 +435,15 @@ async fn main() -> Result<(), anyhow::Error> {
         name_set.insert(name.clone());
 
         let skill_count = rng.usize_in(3, 6);
-        let skills: Vec<String> = rng
+        let mut skills: Vec<String> = rng
             .sample(role.skills, skill_count)
             .into_iter()
             .map(|s| s.to_string().to_ascii_lowercase())
             .collect();
+
+        for gs in role.guaranteed_skills {
+            skills.push(gs.to_string().to_ascii_lowercase());
+        }
 
         let years: i32 = rng.i32_in(3, 16);
         let bio_template = rng.pick(role.bios);
@@ -426,7 +472,7 @@ async fn main() -> Result<(), anyhow::Error> {
         inserted += 1;
 
         if inserted % 100 == 0 {
-            println!("  {inserted}/1000");
+            println!("  {inserted}/{total}");
         }
     }
 
