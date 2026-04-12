@@ -11,7 +11,6 @@ import { LoggingProjectBucketConfig } from "@cdktf/provider-google/lib/logging-p
 import { IamWorkloadIdentityPool } from "@cdktf/provider-google/lib/iam-workload-identity-pool";
 import { IamWorkloadIdentityPoolProvider } from "@cdktf/provider-google/lib/iam-workload-identity-pool-provider";
 import { ServiceAccountIamMember } from "@cdktf/provider-google/lib/service-account-iam-member";
-import {DataGoogleSecretManagerSecret} from "@cdktf/provider-google/lib/data-google-secret-manager-secret";
 
 const PROJECT = "talents-493111";
 const REGION = "europe-west3";
@@ -56,11 +55,6 @@ class TalentsStack extends TerraformStack {
       location: REGION,
       description: "Docker images for the talents app",
       dependsOn: [enabledApis["artifactregistry.googleapis.com"]],
-    });
-
-    // --- Secret: database URL ---
-    const dbUrlSecret = new DataGoogleSecretManagerSecret(this, "db-url-secret", {
-      secretId: "database-url",
     });
 
     // --- Cloud Run service account ---
@@ -119,7 +113,7 @@ class TalentsStack extends TerraformStack {
                 name: "DATABASE_URL",
                 valueSource: {
                   secretKeyRef: {
-                    secret: dbUrlSecret.secretId,
+                    secret: "database-url",
                     version: "latest",
                   },
                 },
