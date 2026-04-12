@@ -102,7 +102,7 @@ class TalentsStack extends TerraformStack {
               cpuIdle: true,
             },
             env: [
-              { name: "RUST_LOG", value: "info" },
+              { name: "RUST_LOG", value: "debug" },
               { name: "USE_GCP_AUTH", value: "true" },
               {
                 name: "LLM_URL",
