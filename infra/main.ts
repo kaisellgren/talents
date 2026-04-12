@@ -109,7 +109,7 @@ class TalentsStack extends TerraformStack {
                 // gemini-2.0-flash is only available via us-central1 on Vertex AI
                 value: `https://us-central1-aiplatform.googleapis.com/v1beta1/projects/${PROJECT}/locations/us-central1/endpoints/openapi`,
               },
-              { name: "LLM_MODEL", value: "google/gemini-2.0-flash" },
+              { name: "LLM_MODEL", value: "google/gemini-1.5-flash-002" },
               {
                 name: "DATABASE_URL",
                 valueSource: {
