@@ -60,6 +60,7 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
 
     // LLM_URL is the OpenAI-compatible base (e.g. "http://localhost:1234/v1" or
     // the Vertex AI openapi endpoint). Always append just "/chat/completions".
+    let llm_start = std::time::Instant::now();
     let response = request
         .send()
         .await
@@ -80,7 +81,8 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
         .context("Missing content in LLM response")?
         .to_string();
 
-    tracing::debug!("LLM raw response: {}", content);
+    tracing::info!("LLM call completed in {}ms (model={})", llm_start.elapsed().as_millis(), model);
+    tracing::info!("LLM raw response: {}", content);
 
     // Strip leading noise (e.g. ```json, control tokens) and trailing noise (e.g. ```)
     // by slicing from the first { or [ to the last } or ].
