@@ -1,0 +1,19 @@
+{
+  "name": "talents-infra",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "deploy": "cdktf deploy",
+    "destroy": "cdktf destroy",
+    "synth": "cdktf synth"
+  },
+  "dependencies": {
+    "@cdktf/provider-google": "^16.12.1",
+    "cdktf": "^0.21.0",
+    "constructs": "^10.6.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.2",
+    "typescript": "^6.0.2"
+  }
+}

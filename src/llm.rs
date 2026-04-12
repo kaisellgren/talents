@@ -9,6 +9,24 @@ static HTTP_CLIENT: LazyLock<reqwest::Client> = LazyLock::new(|| {
         .expect("failed to build HTTP client")
 });
 
+/// Fetches a GCP access token from the instance metadata server.
+/// Only called when USE_GCP_AUTH=true.
+async fn fetch_gcp_access_token() -> Result<String> {
+    let resp: Value = HTTP_CLIENT
+        .get("http://metadata.google.internal/computeMetadata/v1/instance/service-accounts/default/token")
+        .header("Metadata-Flavor", "Google")
+        .send()
+        .await
+        .context("Failed to reach GCP metadata server")?
+        .json()
+        .await
+        .context("Failed to parse GCP metadata token response")?;
+    resp["access_token"]
+        .as_str()
+        .map(|s| s.to_string())
+        .context("Missing access_token in GCP metadata response")
+}
+
 /// Sends a chat completion request to the LLM server.
 /// Returns the raw content string from the first choice.
 pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<String> {
@@ -16,6 +34,7 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
         std::env::var("LLM_URL").unwrap_or_else(|_| "http://localhost:9000".to_string());
     let model =
         std::env::var("LLM_MODEL").unwrap_or_else(|_| "Qwen/Qwen2.5-3B-Instruct".to_string());
+    let use_gcp_auth = std::env::var("USE_GCP_AUTH").unwrap_or_default() == "true";
 
     let system_prompt_with_json = format!(
         "{}\n\nYou MUST respond with valid JSON only. Do not include any explanation, markdown, or text outside the JSON object.",
@@ -30,9 +49,16 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
         ]
     });
 
-    let response = HTTP_CLIENT
+    let mut request = HTTP_CLIENT
         .post(format!("{}/v1/chat/completions", llm_url))
-        .json(&body)
+        .json(&body);
+
+    if use_gcp_auth {
+        let token = fetch_gcp_access_token().await?;
+        request = request.bearer_auth(token);
+    }
+
+    let response = request
         .send()
         .await
         .context("Failed to reach LLM server")?;

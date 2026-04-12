@@ -1,0 +1,7 @@
+target/
+frontend/
+.env
+.env.*
+.git/
+infra/
+.github/

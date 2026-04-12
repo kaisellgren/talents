@@ -20,7 +20,11 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let app = talents::create_app(pool);
 
-    let addr: SocketAddr = ([127, 0, 0, 1], 3000).into();
+    let port: u16 = std::env::var("PORT")
+        .unwrap_or_else(|_| "3000".to_string())
+        .parse()
+        .expect("PORT must be a valid number");
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
     println!("Listening on {}", addr);
     axum::Server::bind(&addr)
         .serve(app.into_make_service())
