@@ -181,6 +181,7 @@ class TalentsStack extends TerraformStack {
     const githubSaRoles = [
       "roles/run.developer",
       "roles/artifactregistry.writer",
+      "roles/logging.admin",
     ];
     for (const role of githubSaRoles) {
       new ProjectIamMember(this, `github-sa-${role.replace(/\//g, "-")}`, {
