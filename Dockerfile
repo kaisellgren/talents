@@ -1,9 +1,10 @@
 FROM node:24-slim AS frontend-builder
 WORKDIR /app
-COPY frontend/package.json frontend/package-lock.json ./
-RUN npm ci
+RUN npm install -g pnpm
+COPY frontend/package.json frontend/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 COPY frontend/ ./
-RUN npm run build
+RUN pnpm run build
 
 FROM rust:1.94-slim AS builder
 WORKDIR /app
