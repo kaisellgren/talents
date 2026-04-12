@@ -4,6 +4,7 @@ import { LayoutGrid, Search, Sparkles } from 'lucide-react';
 import { runAgent } from './api';
 import type { AgentResponse, AgentTalent, Talent } from './types';
 import { TalentCard } from './components/TalentCard';
+import { AgentLoader } from './components/AgentLoader';
 import { CatalogPage } from './pages/CatalogPage';
 import * as s from './App.css';
 
@@ -142,12 +143,7 @@ function SearchPage() {
           </div>
         </div>
 
-        {loading && (
-          <p className={s.statusMsg}>
-            <span className={s.statusDot} />
-            determining required skills…
-          </p>
-        )}
+        {loading && <AgentLoader />}
         {error && <p className={s.errorMsg}>{error}</p>}
       </section>
 
