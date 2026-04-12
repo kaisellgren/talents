@@ -2,6 +2,8 @@
 
 A demo project written in Rust that uses a controlled agentic LLM loop to search and rank talents from a PostgreSQL database.
 
+Demo: https://talents-iqgi7ee7uq-ey.a.run.app/
+
 ![Screenshot](docs/screenshot.avif)
 
 ## Requirements
