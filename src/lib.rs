@@ -5,6 +5,7 @@ pub mod llm;
 
 use axum::{routing::{get, post}, Extension, Router};
 use sqlx::PgPool;
+use tower_http::services::{ServeDir, ServeFile};
 
 /// Builds the Axum router with DB pool injected. Used by both main() and integration tests.
 pub fn create_app(pool: PgPool) -> Router {
@@ -13,4 +14,8 @@ pub fn create_app(pool: PgPool) -> Router {
         .nest("/talents", routes::talent::router())
         .route("/agents/run", post(routes::talent::run_agent))
         .layer(Extension(pool))
+        .fallback_service(
+            ServeDir::new("dist")
+                .not_found_service(ServeFile::new("dist/index.html")),
+        )
 }
