@@ -106,6 +106,9 @@ fn normalize_skill(skill: String) -> String {
     if skill.ends_with("designer") {
         return skill.replace("designer", "design").into();
     }
+    if skill == "nodejs" {
+        return "node.js".into();
+    }
     if skill == "backend engineering" {
         return "backend".into();
     }
