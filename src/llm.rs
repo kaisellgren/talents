@@ -50,7 +50,7 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
     });
 
     let mut request = HTTP_CLIENT
-        .post(format!("{}/v1/chat/completions", llm_url))
+        .post(format!("{}/chat/completions", llm_url))
         .json(&body);
 
     if use_gcp_auth {
@@ -58,6 +58,8 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
         request = request.bearer_auth(token);
     }
 
+    // LLM_URL is the OpenAI-compatible base (e.g. "http://localhost:1234/v1" or
+    // the Vertex AI openapi endpoint). Always append just "/chat/completions".
     let response = request
         .send()
         .await
