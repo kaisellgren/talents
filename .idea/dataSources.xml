@@ -8,5 +8,12 @@
       <jdbc-url>jdbc:postgresql://localhost:5432/talents</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="Neon" uuid="ca64c1a7-b575-4876-8a50-08dd4de49792">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ep-flat-wind-al4aqje9.c-3.eu-central-1.aws.neon.tech/talents?sslmode=require</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
