@@ -82,12 +82,16 @@ pub async fn chat_completion(system_prompt: &str, user_content: &str) -> Result<
 
     tracing::debug!("LLM raw response: {}", content);
 
-    // Strip any leading control tokens / metadata (e.g. LM Studio's <|channel|>...<|message|>)
-    // by finding the first JSON start character.
+    // Strip leading noise (e.g. ```json, control tokens) and trailing noise (e.g. ```)
+    // by slicing from the first { or [ to the last } or ].
     let json_start = content
         .find(|c| c == '{' || c == '[')
         .context("No JSON object found in LLM response")?;
-    let content = content[json_start..].to_string();
+    let content = &content[json_start..];
+    let json_end = content
+        .rfind(|c| c == '}' || c == ']')
+        .context("No closing bracket found in LLM response")?;
+    let content = content[..=json_end].to_string();
 
     Ok(content)
 }
