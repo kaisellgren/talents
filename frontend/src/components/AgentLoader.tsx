@@ -15,7 +15,7 @@ export function AgentLoader() {
   useEffect(() => {
     const id = setInterval(() => {
       setActiveStep(prev => Math.min(prev + 1, STEPS.length - 1));
-    }, 2800);
+    }, 1000);
     return () => clearInterval(id);
   }, []);
 
