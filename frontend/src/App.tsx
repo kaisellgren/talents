@@ -127,21 +127,23 @@ function SearchPage() {
           </button>
         </form>
 
-        <div className={s.promptCloud}>
-          <p className={s.promptCloudLabel}>AI Prompt Cloud — Click to explore</p>
-          <div className={s.promptChips}>
-            {PROMPTS.map((p) => (
-              <button
-                key={p.title}
-                className={s.promptChip}
-                type="button"
-                onClick={() => setPrompt(p.text)}
-              >
-                {p.title}
-              </button>
-            ))}
-          </div>
-        </div>
+        {!loading && (
+            <div className={s.promptCloud}>
+              <p className={s.promptCloudLabel}>AI Prompt Cloud — Click to explore</p>
+              <div className={s.promptChips}>
+                {PROMPTS.map((p) => (
+                    <button
+                        key={p.title}
+                        className={s.promptChip}
+                        type="button"
+                        onClick={() => setPrompt(p.text)}
+                    >
+                      {p.title}
+                    </button>
+                ))}
+              </div>
+            </div>
+        )}
 
         {loading && <AgentLoader />}
         {error && <p className={s.errorMsg}>{error}</p>}
