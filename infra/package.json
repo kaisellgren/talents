@@ -13,6 +13,7 @@
     "constructs": "^10.6.0"
   },
   "devDependencies": {
+    "cdktf-cli": "^0.21.0",
     "ts-node": "^10.9.2",
     "typescript": "^6.0.2"
   }
