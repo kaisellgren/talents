@@ -108,7 +108,7 @@ class TalentsStack extends TerraformStack {
                 name: "LLM_URL",
                 value: `https://us-central1-aiplatform.googleapis.com/v1beta1/projects/${PROJECT}/locations/us-central1/endpoints/openapi`,
               },
-              { name: "LLM_MODEL", value: "google/gemini-2.5-flash-lite" },
+              { name: "LLM_MODEL", value: "google/gemini-3.1-flash-lite" },
               {
                 name: "DATABASE_URL",
                 valueSource: {
