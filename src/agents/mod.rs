@@ -3,6 +3,7 @@ pub mod ranking;
 pub mod research;
 pub mod summarizer;
 pub mod triage;
+pub mod skill_normalization;
 
 use anyhow::Result;
 use serde::Serialize;

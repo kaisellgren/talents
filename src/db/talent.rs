@@ -1,7 +1,8 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
-use sqlx::{FromRow, PgPool, query_as};
+use sqlx::{query_as, FromRow, PgPool};
 use uuid::Uuid;
+use crate::agents::skill_normalization;
 
 #[derive(Debug, Clone, PartialEq, Eq, FromRow, Serialize, Deserialize)]
 pub struct Talent {
@@ -72,7 +73,7 @@ pub async fn search_by_skills_and_location(
 
     let skills_lower: Vec<String> = required_skills
         .iter()
-        .map(|s| normalize_skill(s.to_ascii_lowercase()))
+        .map(|s| skill_normalization::normalize_skill(s.trim().to_ascii_lowercase()))
         .collect();
     let skills_json =
         serde_json::to_value(&skills_lower).map_err(|e| sqlx::Error::Decode(Box::new(e)))?;
@@ -90,7 +91,7 @@ pub async fn search_by_skills_and_location(
         }
         (None, None) => "SELECT * FROM talents WHERE skills @> $1::jsonb LIMIT 20",
     };
-
+    println!("SKILLS: {skills_json}");
     let mut q = query_as::<_, Talent>(query_str).bind(skills_json);
     if let Some(c) = city {
         q = q.bind(c);
@@ -99,24 +100,8 @@ pub async fn search_by_skills_and_location(
         q = q.bind(co);
     }
 
-    q.fetch_all(pool).await
-}
-
-fn normalize_skill(skill: String) -> String {
-    if skill.ends_with("designer") {
-        return skill.replace("designer", "design").into();
-    }
-    if skill == "nodejs" {
-        return "node.js".into();
-    }
-    if skill == "backend engineering" {
-        return "backend".into();
-    }
-    if skill == "frontend engineering" {
-        return "frontend".into();
-    }
-    if skill == "product owner" {
-        return "product management".into();
-    }
-    skill
+    let result = q.fetch_all(pool).await?;
+    let count = result.len();
+    println!("Talents: {count}");
+    Ok(result)
 }

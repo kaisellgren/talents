@@ -1,3 +1,4 @@
+use crate::agents::skill_normalization::normalize_skill;
 use crate::agents::triage::TriageOutput;
 use crate::db::talent::Talent;
 
@@ -21,6 +22,7 @@ pub fn run(talents: Vec<Talent>, triage: &TriageOutput) -> Vec<Talent> {
             triage
                 .required_skills
                 .iter()
+                .map(|s| normalize_skill(s.trim().to_ascii_lowercase()))
                 .all(|req| skills_lower.contains(&req.to_ascii_lowercase()))
         })
         .collect()
