@@ -6,6 +6,10 @@ Demo: https://talents-iqgi7ee7uq-ey.a.run.app/
 
 ![Screenshot](docs/screenshot.avif)
 
+## Agentic loop overview
+
+![Agentic loop](docs/agentic_loop.svg)
+
 ## Requirements
 
 - Rust for backend
